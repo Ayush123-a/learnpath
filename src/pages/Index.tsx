@@ -1,5 +1,6 @@
 import { GraduationCap, BookOpen, Users, Trophy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const degrees = ["BCA", "BBA", "BCom", "MCA", "MBA"];
@@ -24,8 +25,8 @@ const Index = () => {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">Log in</Button>
-            <Button size="sm">Get Started</Button>
+            <Button variant="ghost" size="sm" asChild><Link to="/auth">Log in</Link></Button>
+            <Button size="sm" asChild><Link to="/auth">Get Started</Link></Button>
           </div>
         </div>
       </header>
@@ -46,12 +47,14 @@ const Index = () => {
             Video lectures, notes, mock tests & AI doubt-solving — everything you need for BCA, BBA, BCom, MCA & MBA in one place.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" className="gap-2 px-8 text-base shadow-lg shadow-primary/25">
-              Start Learning Free
-              <ArrowRight className="h-4 w-4" />
+            <Button size="lg" className="gap-2 px-8 text-base shadow-lg shadow-primary/25" asChild>
+              <Link to="/auth">
+                Start Learning Free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 px-8 text-base">
-              Explore Courses
+            <Button variant="outline" size="lg" className="gap-2 px-8 text-base" asChild>
+              <Link to="/auth">Explore Courses</Link>
             </Button>
           </div>
 
@@ -110,9 +113,12 @@ const Index = () => {
               size="lg"
               variant="secondary"
               className="mt-8 gap-2 bg-accent text-accent-foreground px-8 text-base font-semibold shadow-lg hover:bg-accent/90"
+              asChild
             >
-              Get Started — It's Free
-              <ArrowRight className="h-4 w-4" />
+              <Link to="/auth">
+                Get Started — It's Free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
