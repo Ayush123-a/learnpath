@@ -14,6 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
+      degrees: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          duration_years: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          duration_years?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          duration_years?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lectures: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_minutes: number | null
+          id: string
+          is_free: boolean
+          is_published: boolean
+          pdf_url: string | null
+          sort_order: number
+          title: string
+          topic_id: string
+          type: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          pdf_url?: string | null
+          sort_order?: number
+          title: string
+          topic_id: string
+          type?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          pdf_url?: string | null
+          sort_order?: number
+          title?: string
+          topic_id?: string
+          type?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lectures_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -47,6 +136,152 @@ export type Database = {
         }
         Relationships: []
       }
+      semesters: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          semester_number: number
+          year_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          semester_number: number
+          year_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          semester_number?: number
+          year_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "semesters_year_id_fkey"
+            columns: ["year_id"]
+            isOneToOne: false
+            referencedRelation: "years"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          code: string
+          created_at: string
+          credits: number
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          semester_id: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          credits?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          semester_id: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          credits?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          semester_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+          topic_number: number
+          unit_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          title: string
+          topic_number: number
+          unit_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+          topic_number?: number
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      units: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          subject_id: string
+          title: string
+          unit_number: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          subject_id: string
+          title: string
+          unit_number: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          subject_id?: string
+          title?: string
+          unit_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -67,6 +302,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      years: {
+        Row: {
+          created_at: string
+          degree_id: string
+          id: string
+          label: string
+          year_number: number
+        }
+        Insert: {
+          created_at?: string
+          degree_id: string
+          id?: string
+          label: string
+          year_number: number
+        }
+        Update: {
+          created_at?: string
+          degree_id?: string
+          id?: string
+          label?: string
+          year_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "years_degree_id_fkey"
+            columns: ["degree_id"]
+            isOneToOne: false
+            referencedRelation: "degrees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
