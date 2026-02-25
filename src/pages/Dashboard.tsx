@@ -16,6 +16,7 @@ const studentFeatures = [
   { label: "Mock Tests", icon: FileQuestion, href: "/quizzes", desc: "Practice with timed tests" },
   { label: "AI Doubt Solver", icon: Sparkles, href: "/doubt-solver", desc: "Get instant AI help" },
   { label: "GPA Calculator", icon: Calculator, href: "/gpa-calculator", desc: "Calculate your GPA/CGPA" },
+  { label: "Digital Library", icon: BookOpen, href: "/library", desc: "Browse textbooks & notes" },
 ];
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color: string; features: { label: string; icon: typeof BookOpen; href: string; desc: string }[] }> = {
