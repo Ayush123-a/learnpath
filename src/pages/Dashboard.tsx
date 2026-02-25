@@ -31,11 +31,11 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
     icon: BookOpen,
     color: "bg-green-500/10 text-green-700",
     features: [
-      { label: "Upload Lectures", icon: Play, href: "/courses", desc: "Manage course content" },
-      { label: "Create Tests", icon: FileQuestion, href: "/quizzes", desc: "Build quizzes & exams" },
-      { label: "Grade Assignments", icon: FileText, href: "/dashboard", desc: "Coming soon" },
-      { label: "Answer Doubts", icon: Sparkles, href: "/doubt-solver", desc: "Help students" },
-      { label: "Track Performance", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
+      { label: "Faculty Panel", icon: BookOpen, href: "/faculty", desc: "Manage all content" },
+      { label: "Upload Lectures", icon: Play, href: "/faculty", desc: "Manage course content" },
+      { label: "Create Tests", icon: FileQuestion, href: "/faculty", desc: "Build quizzes & exams" },
+      { label: "Grade Assignments", icon: FileText, href: "/faculty", desc: "Review submissions" },
+      { label: "Track Performance", icon: BarChart3, href: "/faculty", desc: "View analytics" },
     ],
   },
   admin: {
