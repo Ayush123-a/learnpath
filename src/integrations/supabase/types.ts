@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_annotations: {
+        Row: {
+          annotation_type: string
+          book_id: string
+          color: string | null
+          content: string | null
+          created_at: string
+          id: string
+          page_number: number
+          position_data: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          annotation_type?: string
+          book_id: string
+          color?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          page_number: number
+          position_data?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          annotation_type?: string
+          book_id?: string
+          color?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          page_number?: number
+          position_data?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_annotations_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookmarks: {
         Row: {
           created_at: string
@@ -39,6 +86,106 @@ export type Database = {
             columns: ["lecture_id"]
             isOneToOne: false
             referencedRelation: "lectures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      books: {
+        Row: {
+          author: string
+          book_type: string
+          cover_url: string | null
+          created_at: string
+          degree_id: string | null
+          description: string | null
+          edition: string | null
+          file_type: string
+          file_url: string | null
+          free_preview_pages: number | null
+          id: string
+          is_free: boolean
+          is_published: boolean
+          is_required: boolean
+          isbn: string | null
+          publication: string | null
+          semester_id: string | null
+          subject_id: string | null
+          tags: string[] | null
+          title: string
+          total_pages: number | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          author: string
+          book_type?: string
+          cover_url?: string | null
+          created_at?: string
+          degree_id?: string | null
+          description?: string | null
+          edition?: string | null
+          file_type?: string
+          file_url?: string | null
+          free_preview_pages?: number | null
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          is_required?: boolean
+          isbn?: string | null
+          publication?: string | null
+          semester_id?: string | null
+          subject_id?: string | null
+          tags?: string[] | null
+          title: string
+          total_pages?: number | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          author?: string
+          book_type?: string
+          cover_url?: string | null
+          created_at?: string
+          degree_id?: string | null
+          description?: string | null
+          edition?: string | null
+          file_type?: string
+          file_url?: string | null
+          free_preview_pages?: number | null
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          is_required?: boolean
+          isbn?: string | null
+          publication?: string | null
+          semester_id?: string | null
+          subject_id?: string | null
+          tags?: string[] | null
+          title?: string
+          total_pages?: number | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "books_degree_id_fkey"
+            columns: ["degree_id"]
+            isOneToOne: false
+            referencedRelation: "degrees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "books_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "books_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
         ]
@@ -318,6 +465,38 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_progress: {
+        Row: {
+          book_id: string
+          current_page: number
+          id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          current_page?: number
+          id?: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          current_page?: number
+          id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
         ]

@@ -14,6 +14,8 @@ import GPACalculator from "./pages/GPACalculator";
 import DoubtSolver from "./pages/DoubtSolver";
 import QuizList from "./pages/QuizList";
 import MockTest from "./pages/MockTest";
+import Library from "./pages/Library";
+import BookReader from "./pages/BookReader";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
             <Route path="/doubt-solver" element={<ProtectedRoute><DoubtSolver /></ProtectedRoute>} />
             <Route path="/quizzes" element={<ProtectedRoute><QuizList /></ProtectedRoute>} />
             <Route path="/quiz/:quizId" element={<ProtectedRoute><MockTest /></ProtectedRoute>} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/library/read/:bookId" element={<BookReader />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
