@@ -17,6 +17,7 @@ import MockTest from "./pages/MockTest";
 import Library from "./pages/Library";
 import BookReader from "./pages/BookReader";
 import FacultyDashboard from "./pages/FacultyDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
