@@ -43,11 +43,11 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
     icon: Shield,
     color: "bg-red-500/10 text-red-700",
     features: [
-      { label: "Manage Users", icon: Users, href: "/dashboard", desc: "Coming soon" },
-      { label: "Manage Degrees", icon: GraduationCap, href: "/courses", desc: "Course structure" },
-      { label: "Subscriptions", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
-      { label: "Revenue Dashboard", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
-      { label: "Analytics", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
+      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Full admin control" },
+      { label: "Manage Users", icon: Users, href: "/admin", desc: "Roles & permissions" },
+      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure" },
+      { label: "Approve Books", icon: BookOpen, href: "/admin", desc: "Library management" },
+      { label: "Analytics", icon: BarChart3, href: "/admin", desc: "Platform insights" },
     ],
   },
   parent: {
