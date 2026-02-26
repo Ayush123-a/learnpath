@@ -55,10 +55,11 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
     icon: Heart,
     color: "bg-pink-500/10 text-pink-700",
     features: [
-      { label: "Attendance", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
-      { label: "Performance", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
-      { label: "Study Time", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
-      { label: "Weak Subjects", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
+      { label: "Parent Dashboard", icon: Heart, href: "/parent", desc: "Monitor your child" },
+      { label: "Attendance", icon: BarChart3, href: "/parent", desc: "Track attendance" },
+      { label: "Performance", icon: BarChart3, href: "/parent", desc: "Quiz & test scores" },
+      { label: "Study Time", icon: BarChart3, href: "/parent", desc: "Daily study hours" },
+      { label: "Weak Subject Alerts", icon: BarChart3, href: "/parent", desc: "Get notified" },
     ],
   },
   content_creator: {
