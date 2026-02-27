@@ -88,9 +88,6 @@ const Dashboard = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  const primaryRole = roles[0] || "student";
-  const config = roleConfig[primaryRole];
-  const Icon = config.icon;
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,34 +125,42 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <Card className="md:col-span-2 lg:col-span-3 mb-6">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 font-display text-xl">
-              <Icon className="h-5 w-5 text-primary" /> {config.label} Dashboard
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Quick access to your tools and features.</p>
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {config.features.map((feature) => (
-            <Link key={feature.label} to={feature.href}>
-              <Card className="group hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full">
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className={`rounded-lg p-3 ${config.color}`}>
-                    <feature.icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{feature.label}</h3>
-                    <p className="text-sm text-muted-foreground">{feature.desc}</p>
-                  </div>
+        {roles.map((role) => {
+          const rc = roleConfig[role];
+          const RoleIcon = rc.icon;
+          return (
+            <div key={role} className="mb-8">
+              <Card className="mb-4">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 font-display text-xl">
+                    <RoleIcon className="h-5 w-5 text-primary" /> {rc.label} Dashboard
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Quick access to your {rc.label.toLowerCase()} tools and features.</p>
                 </CardContent>
               </Card>
-            </Link>
-          ))}
-        </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {rc.features.map((feature) => (
+                  <Link key={feature.label} to={feature.href}>
+                    <Card className="group hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full">
+                      <CardContent className="flex items-center gap-4 p-6">
+                        <div className={`rounded-lg p-3 ${rc.color}`}>
+                          <feature.icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{feature.label}</h3>
+                          <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </main>
     </div>
   );
