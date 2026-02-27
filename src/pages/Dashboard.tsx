@@ -88,9 +88,6 @@ const Dashboard = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  const primaryRole = roles[0] || "student";
-  const config = roleConfig[primaryRole];
-  const Icon = config.icon;
 
   return (
     <div className="min-h-screen bg-background">
