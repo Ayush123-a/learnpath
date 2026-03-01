@@ -2,12 +2,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell } from "lucide-react";
 import logo from "@/assets/logo.png";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminDegrees from "@/components/admin/AdminDegrees";
 import AdminBooks from "@/components/admin/AdminBooks";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
+import AdminNotifications from "@/components/admin/AdminNotifications";
 
 const AdminDashboard = () => {
   const { user, roles, loading } = useAuth();
@@ -41,17 +43,21 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container py-6">
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="users" className="gap-2"><Users className="h-4 w-4" /> Users</TabsTrigger>
-            <TabsTrigger value="degrees" className="gap-2"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
-            <TabsTrigger value="books" className="gap-2"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="flex w-full overflow-x-auto">
+            <TabsTrigger value="analytics" className="gap-2 flex-1"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
+            <TabsTrigger value="users" className="gap-2 flex-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
+            <TabsTrigger value="degrees" className="gap-2 flex-1"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
+            <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
+            <TabsTrigger value="subscriptions" className="gap-2 flex-1"><CreditCard className="h-4 w-4" /> Subs</TabsTrigger>
+            <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
           </TabsList>
+          <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
           <TabsContent value="users"><AdminUsers /></TabsContent>
           <TabsContent value="degrees"><AdminDegrees /></TabsContent>
           <TabsContent value="books"><AdminBooks /></TabsContent>
-          <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
+          <TabsContent value="subscriptions"><AdminSubscriptions /></TabsContent>
+          <TabsContent value="notifications"><AdminNotifications /></TabsContent>
         </Tabs>
       </main>
     </div>
