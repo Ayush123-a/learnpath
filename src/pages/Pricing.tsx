@@ -225,7 +225,7 @@ const Pricing = () => {
             {couponResult?.valid && (
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Discount</span>
-                <span className="text-green-600 font-semibold">
+                <span className="text-primary font-semibold">
                   -₹{(selectedPlanData?.price_total || 0) - getDiscountedPrice()}
                 </span>
               </div>
