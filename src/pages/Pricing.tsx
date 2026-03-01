@@ -219,7 +219,7 @@ const Pricing = () => {
             </div>
 
             {couponResult && (
-              <p className={`text-sm ${couponResult.valid ? "text-green-600" : "text-destructive"}`}>{couponResult.message}</p>
+              <p className={`text-sm ${couponResult.valid ? "text-primary" : "text-destructive"}`}>{couponResult.message}</p>
             )}
 
             {couponResult?.valid && (
