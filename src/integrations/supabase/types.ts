@@ -456,6 +456,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          sent_by: string
+          target_role: string | null
+          target_user_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          sent_by: string
+          target_role?: string | null
+          target_user_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          sent_by?: string
+          target_role?: string | null
+          target_user_id?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       parent_students: {
         Row: {
           created_at: string
