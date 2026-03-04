@@ -21,6 +21,9 @@ import FacultyDashboard from "./pages/FacultyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ParentDashboard from "./pages/ParentDashboard";
 import Pricing from "./pages/Pricing";
+import AttendanceTracker from "./pages/AttendanceTracker";
+import StudyPlanner from "./pages/StudyPlanner";
+import TimetableBuilder from "./pages/TimetableBuilder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +49,9 @@ const App = () => (
               <Route path="/quiz/:quizId" element={<ProtectedRoute><MockTest /></ProtectedRoute>} />
               <Route path="/library" element={<Library />} />
               <Route path="/library/read/:bookId" element={<BookReader />} />
+              <Route path="/attendance" element={<ProtectedRoute><AttendanceTracker /></ProtectedRoute>} />
+              <Route path="/study-planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
+              <Route path="/timetable" element={<ProtectedRoute><TimetableBuilder /></ProtectedRoute>} />
               <Route path="/faculty" element={<ProtectedRoute requiredRole="faculty"><FacultyDashboard /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
               <Route path="/parent" element={<ProtectedRoute requiredRole="parent"><ParentDashboard /></ProtectedRoute>} />
