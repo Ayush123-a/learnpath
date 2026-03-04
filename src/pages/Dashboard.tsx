@@ -7,6 +7,7 @@ import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
   LogOut, GraduationCap, Bell, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
+  CalendarDays, Clock, Calendar,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -17,6 +18,9 @@ const studentFeatures = [
   { label: "AI Doubt Solver", icon: Sparkles, href: "/doubt-solver", desc: "Get instant AI help" },
   { label: "GPA Calculator", icon: Calculator, href: "/gpa-calculator", desc: "Calculate your GPA/CGPA" },
   { label: "Digital Library", icon: BookOpen, href: "/library", desc: "Browse textbooks & notes" },
+  { label: "Attendance", icon: CalendarDays, href: "/attendance", desc: "Track your attendance" },
+  { label: "Study Planner", icon: Clock, href: "/study-planner", desc: "Log & track study time" },
+  { label: "Timetable", icon: Calendar, href: "/timetable", desc: "Build your schedule" },
   { label: "Pricing & Plans", icon: CreditCard, href: "/pricing", desc: "Upgrade your plan" },
 ];
 
