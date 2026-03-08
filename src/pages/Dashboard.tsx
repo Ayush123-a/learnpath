@@ -2,6 +2,7 @@ import { useAuth, AppRole } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import AdBanner from "@/components/ads/AdBanner";
 import NewsFeed from "@/components/NewsFeed";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +37,7 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
   faculty: {
     label: "Faculty",
     icon: BookOpen,
-    color: "bg-green-500/10 text-green-700",
+    color: "bg-green-500/10 text-green-700 dark:text-green-400",
     features: [
       { label: "Faculty Panel", icon: BookOpen, href: "/faculty", desc: "Manage all content" },
       { label: "Upload Lectures", icon: Play, href: "/faculty", desc: "Manage course content" },
@@ -48,7 +49,7 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
   admin: {
     label: "Admin",
     icon: Shield,
-    color: "bg-red-500/10 text-red-700",
+    color: "bg-red-500/10 text-red-700 dark:text-red-400",
     features: [
       { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Full admin control" },
       { label: "Manage Users", icon: Users, href: "/admin", desc: "Roles & permissions" },
@@ -60,7 +61,7 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
   parent: {
     label: "Parent",
     icon: Heart,
-    color: "bg-pink-500/10 text-pink-700",
+    color: "bg-pink-500/10 text-pink-700 dark:text-pink-400",
     features: [
       { label: "Parent Dashboard", icon: Heart, href: "/parent", desc: "Monitor your child" },
       { label: "Attendance", icon: BarChart3, href: "/parent", desc: "Track attendance" },
@@ -72,7 +73,7 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
   content_creator: {
     label: "Content Creator",
     icon: Palette,
-    color: "bg-purple-500/10 text-purple-700",
+    color: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
     features: [
       { label: "Creator Studio", icon: Palette, href: "/creator", desc: "Upload books & news" },
       { label: "Upload Books", icon: BookOpen, href: "/creator", desc: "Add textbooks & notes" },
@@ -101,12 +102,13 @@ const Dashboard = () => {
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src={logo} alt="ScholarsHub" className="h-8 w-8 rounded" />
+            <img src={logo} alt="Learn Path" className="h-8 w-8 rounded" />
             <span className="font-display text-lg font-bold">
-              Scholars<span className="text-primary">Hub</span>
+              Learn<span className="text-primary">Path</span>
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Button variant="ghost" size="icon"><Bell className="h-4 w-4" /></Button>
             <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
               <LogOut className="h-4 w-4" /> Sign Out

@@ -94,8 +94,8 @@ const Courses = () => {
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
         <div className="container flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src={logo} alt="ScholarsHub" className="h-8 w-8 rounded" loading="lazy" />
-            <span className="font-display text-lg font-bold">Scholars<span className="text-primary">Hub</span></span>
+            <img src={logo} alt="Learn Path" className="h-8 w-8 rounded" loading="lazy" />
+            <span className="font-display text-lg font-bold">Learn<span className="text-primary">Path</span></span>
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild><Link to="/auth">Log in</Link></Button>

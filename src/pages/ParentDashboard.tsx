@@ -31,7 +31,7 @@ const ParentDashboard = () => {
             <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
           </Link>
           <div className="flex items-center gap-2.5">
-            <img src={logo} alt="ScholarsHub" className="h-8 w-8 rounded" />
+            <img src={logo} alt="Learn Path" className="h-8 w-8 rounded" />
             <span className="font-display text-lg font-bold">
               <Heart className="inline h-4 w-4 text-pink-500 mr-1" />
               Parent Dashboard

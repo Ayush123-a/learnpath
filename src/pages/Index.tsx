@@ -1,6 +1,7 @@
 import { GraduationCap, BookOpen, Users, Trophy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 
 const degrees = ["BCA", "BBA", "BCom", "MCA", "MBA"];
@@ -19,12 +20,13 @@ const Index = () => {
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src={logo} alt="ScholarsHub" className="h-9 w-9 rounded" />
+            <img src={logo} alt="Learn Path" className="h-9 w-9 rounded" />
             <span className="font-display text-xl font-bold tracking-tight text-foreground">
-              Scholars<span className="text-primary">Hub</span>
+              Learn<span className="text-primary">Path</span>
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Button variant="ghost" size="sm" asChild><Link to="/auth">Log in</Link></Button>
             <Button size="sm" asChild><Link to="/auth">Get Started</Link></Button>
           </div>
@@ -33,7 +35,7 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
         <div className="container relative text-center">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm text-muted-foreground shadow-sm mb-8">
             <GraduationCap className="h-4 w-4 text-primary" />
@@ -107,12 +109,12 @@ const Index = () => {
               Ready to Ace Your Exams?
             </h2>
             <p className="mt-4 text-primary-foreground/80">
-              Join thousands of students already learning on ScholarsHub.
+              Join thousands of students already learning on Learn Path.
             </p>
             <Button
               size="lg"
               variant="secondary"
-              className="mt-8 gap-2 bg-accent text-accent-foreground px-8 text-base font-semibold shadow-lg hover:bg-accent/90"
+              className="mt-8 gap-2 px-8 text-base font-semibold shadow-lg"
               asChild
             >
               <Link to="/auth">
@@ -128,11 +130,11 @@ const Index = () => {
       <footer className="border-t py-8">
         <div className="container flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="ScholarsHub" className="h-6 w-6 rounded" />
-            <span className="font-display text-sm font-semibold text-foreground">ScholarsHub</span>
+            <img src={logo} alt="Learn Path" className="h-6 w-6 rounded" />
+            <span className="font-display text-sm font-semibold text-foreground">Learn Path</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2026 ScholarsHub. Built for Indian university students.
+            © 2026 Learn Path. Built for Indian university students.
           </p>
         </div>
       </footer>
