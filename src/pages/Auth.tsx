@@ -75,6 +75,10 @@ const Auth = () => {
       toast.error("Please enter your Student ID");
       return;
     }
+    if (!selectedCollegeId && colleges.length > 0) {
+      toast.error("Please select your college");
+      return;
+    }
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
@@ -92,14 +96,19 @@ const Auth = () => {
       return;
     }
 
-    // If student, update student_id in profile
-    if (signupRole === "student" && data.user) {
-      // Profile is auto-created by trigger, update student_id after a short delay
+    // Update profile with college_id and student_id
+    if (data.user) {
       setTimeout(async () => {
-        await supabase
-          .from("profiles")
-          .update({ student_id: studentId.trim().toUpperCase() })
-          .eq("user_id", data.user!.id);
+        const updates: any = {};
+        if (selectedCollegeId) updates.college_id = selectedCollegeId;
+        if (signupRole === "student" && studentId.trim()) updates.student_id = studentId.trim().toUpperCase();
+        
+        if (Object.keys(updates).length > 0) {
+          await supabase
+            .from("profiles")
+            .update(updates)
+            .eq("user_id", data.user!.id);
+        }
       }, 1000);
     }
 
