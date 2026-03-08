@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,20 +20,17 @@ const typeLabels: Record<string, string> = {
 };
 
 const QuizList = () => {
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase
-      .from("quizzes")
-      .select("*")
-      .eq("is_published", true)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setQuizzes((data as unknown as Quiz[]) || []);
-        setLoading(false);
-      });
-  }, []);
+  const { data: quizzes = [], isLoading: loading } = useQuery({
+    queryKey: ["published-quizzes"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("quizzes")
+        .select("id, title, description, quiz_type, duration_minutes, total_marks")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+      return (data as unknown as Quiz[]) || [];
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
