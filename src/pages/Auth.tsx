@@ -218,6 +218,26 @@ const Auth = () => {
                     )}
                   </div>
 
+                  {colleges.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>College</Label>
+                      <Select value={selectedCollegeId} onValueChange={setSelectedCollegeId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your college" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colleges.map((c: any) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              <span className="flex items-center gap-2">
+                                <Building2 className="h-3 w-3" /> {c.name} ({c.code})
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
                     <div className="relative">
