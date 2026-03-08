@@ -52,6 +52,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
             <TabsTrigger value="subscriptions" className="gap-2 flex-1"><CreditCard className="h-4 w-4" /> Subs</TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
+            <TabsTrigger value="role-requests" className="gap-2 flex-1"><ShieldCheck className="h-4 w-4" /> Approvals</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
           <TabsContent value="users"><AdminUsers /></TabsContent>
