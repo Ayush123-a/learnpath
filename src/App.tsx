@@ -30,6 +30,7 @@ const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
 const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
+const DeploymentGuide = lazy(() => import("./pages/DeploymentGuide"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/parent" element={<ProtectedRoute requiredRole="parent"><ParentDashboard /></ProtectedRoute>} />
                 <Route path="/creator" element={<ProtectedRoute requiredRole="content_creator"><ContentCreatorDashboard /></ProtectedRoute>} />
+                <Route path="/deployment-guide" element={<ProtectedRoute requiredRole="admin"><DeploymentGuide /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
