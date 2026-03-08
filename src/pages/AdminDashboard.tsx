@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck, Building2 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminDegrees from "@/components/admin/AdminDegrees";
@@ -11,6 +11,7 @@ import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminRoleRequests from "@/components/admin/AdminRoleRequests";
+import AdminColleges from "@/components/admin/AdminColleges";
 
 const AdminDashboard = () => {
   const { user, roles, loading } = useAuth();
