@@ -149,7 +149,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
                 key: orderData.key_id,
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: "ScholarsHub",
+                name: "Learn Path",
                 description: `${plan.name} Plan`,
                 order_id: orderData.order_id,
                 handler: async (response: any) => {

@@ -230,8 +230,8 @@ const MockTest = () => {
             <Button variant="ghost" size="icon" asChild>
               <Link to="/quizzes"><ArrowLeft className="h-4 w-4" /></Link>
             </Button>
-            <img src={logo} alt="ScholarsHub" className="h-7 w-7 rounded" />
-            <span className="font-display text-base font-bold hidden sm:inline">Scholars<span className="text-primary">Hub</span></span>
+            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
+            <span className="font-display text-base font-bold hidden sm:inline">Learn<span className="text-primary">Path</span></span>
           </div>
           {phase === "active" && (
             <div className="flex items-center gap-3">

@@ -100,8 +100,8 @@ const GPACalculator = () => {
             <Link to="/dashboard"><ArrowLeft className="h-4 w-4" /></Link>
           </Button>
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="ScholarsHub" className="h-7 w-7 rounded" />
-            <span className="font-display text-base font-bold">Scholars<span className="text-primary">Hub</span></span>
+            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
+            <span className="font-display text-base font-bold">Learn<span className="text-primary">Path</span></span>
           </Link>
         </div>
       </header>

@@ -110,9 +110,9 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 flex items-center justify-center gap-2.5">
-          <img src={logo} alt="ScholarsHub" className="h-10 w-10 rounded" />
+          <img src={logo} alt="Learn Path" className="h-10 w-10 rounded" />
           <span className="font-display text-2xl font-bold tracking-tight text-foreground">
-            Scholars<span className="text-primary">Hub</span>
+            Learn<span className="text-primary">Path</span>
           </span>
         </Link>
 

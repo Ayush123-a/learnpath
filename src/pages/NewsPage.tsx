@@ -60,7 +60,7 @@ const NewsPage = () => {
         <div className="container flex h-14 items-center gap-4">
           <Link to="/dashboard" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            <img src={logo} alt="ScholarsHub" className="h-7 w-7 rounded" />
+            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
           </Link>
           <h1 className="font-display text-lg font-bold flex items-center gap-2">
             <Newspaper className="h-5 w-5 text-primary" /> News & Announcements
