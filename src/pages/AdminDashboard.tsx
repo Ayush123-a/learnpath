@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo.png";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminDegrees from "@/components/admin/AdminDegrees";
