@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.png";
+import FacultyAssignedSubjects from "@/components/faculty/FacultyAssignedSubjects";
 import FacultyLectures from "@/components/faculty/FacultyLectures";
 import FacultyQuizzes from "@/components/faculty/FacultyQuizzes";
 import FacultyAssignments from "@/components/faculty/FacultyAssignments";
