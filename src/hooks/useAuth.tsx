@@ -8,6 +8,8 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   roles: AppRole[];
+  collegeId: string | null;
+  collegeName: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -16,6 +18,8 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   roles: [],
+  collegeId: null,
+  collegeName: null,
   loading: true,
   signOut: async () => {},
 });
