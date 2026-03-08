@@ -122,6 +122,11 @@ const Dashboard = () => {
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-destructive" />
             </Button>
+            <Link to="/profile">
+              <Button variant="ghost" size="icon">
+                <User className="h-4 w-4" />
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground hover:text-foreground">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
