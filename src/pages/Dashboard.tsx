@@ -120,10 +120,7 @@ const Dashboard = () => {
           </Link>
           <div className="flex items-center gap-1 md:gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative h-9 w-9">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-destructive" />
-            </Button>
+            <NotificationBell />
             <Link to="/profile">
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <User className="h-4 w-4" />
