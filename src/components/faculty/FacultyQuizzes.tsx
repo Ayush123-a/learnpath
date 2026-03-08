@@ -143,14 +143,15 @@ const FacultyQuizzes = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div><Label>Duration (min)</Label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })} /></div>
                 <div><Label>Type</Label>
-                  <Select value={form.quiz_type} onValueChange={(v) => setForm({ ...form, quiz_type: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unit_quiz">Unit Quiz</SelectItem>
-                      <SelectItem value="semester_exam">Semester Exam</SelectItem>
-                      <SelectItem value="practice">Practice</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <Select value={form.quiz_type} onValueChange={(v) => setForm({ ...form, quiz_type: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unit_quiz">Unit Quiz</SelectItem>
+                        <SelectItem value="semester_exam">Semester Exam</SelectItem>
+                        <SelectItem value="mock_exam">Mock Exam</SelectItem>
+                        <SelectItem value="practice">Practice</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </div>
               </div>
               <div className="flex items-center gap-2">
