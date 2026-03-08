@@ -18,6 +18,7 @@ import {
   Eye, EyeOff, Trash2, Loader2, Image as ImageIcon,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import DocumentScanner from "@/components/DocumentScanner";
 
 const BOOK_TYPES = [
   { value: "textbook", label: "Main Textbook" },
