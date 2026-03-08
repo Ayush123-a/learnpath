@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -29,52 +30,60 @@ const typeColor: Record<string, string> = {
 
 const SubjectDetail = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
-  const [subject, setSubject] = useState<Subject | null>(null);
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!subjectId) return;
-    loadData();
-  }, [subjectId]);
+  const { data: subject, isLoading: loadingSub } = useQuery({
+    queryKey: ["subject", subjectId],
+    queryFn: async () => {
+      const { data } = await supabase.from("subjects").select("id, name, code, description, credits").eq("id", subjectId!).single();
+      return data as Subject | null;
+    },
+    enabled: !!subjectId,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    const [subRes, unitRes] = await Promise.all([
-      supabase.from("subjects").select("*").eq("id", subjectId!).single(),
-      supabase.from("units").select("*").eq("subject_id", subjectId!).order("unit_number"),
-    ]);
-    setSubject(subRes.data as Subject | null);
-    const unitData = (unitRes.data as Unit[]) || [];
-    setUnits(unitData);
+  const { data: units = [], isLoading: loadingUnits } = useQuery({
+    queryKey: ["units", subjectId],
+    queryFn: async () => {
+      const { data } = await supabase.from("units").select("id, unit_number, title, description").eq("subject_id", subjectId!).order("unit_number");
+      return (data as Unit[]) || [];
+    },
+    enabled: !!subjectId,
+  });
 
-    if (unitData.length > 0) {
-      const unitIds = unitData.map((u) => u.id);
-      const [topicRes, lectureRes] = await Promise.all([
-        supabase.from("topics").select("*").in("unit_id", unitIds).order("topic_number"),
-        supabase.from("lectures").select("*").eq("is_published", true).order("sort_order"),
-      ]);
-      const topicData = (topicRes.data as Topic[]) || [];
-      setTopics(topicData);
+  const unitIds = useMemo(() => units.map((u) => u.id), [units]);
 
-      if (topicData.length > 0) {
-        const topicIds = topicData.map((t) => t.id);
-        const { data: lData } = await supabase
-          .from("lectures")
-          .select("*")
-          .in("topic_id", topicIds)
-          .eq("is_published", true)
-          .order("sort_order");
-        setLectures((lData as Lecture[]) || []);
-      }
-    }
-    setLoading(false);
-  };
+  const { data: topics = [] } = useQuery({
+    queryKey: ["topics", unitIds],
+    queryFn: async () => {
+      const { data } = await supabase.from("topics").select("id, unit_id, topic_number, title, description").in("unit_id", unitIds).order("topic_number");
+      return (data as Topic[]) || [];
+    },
+    enabled: unitIds.length > 0,
+  });
 
-  const topicsForUnit = (unitId: string) => topics.filter((t) => t.unit_id === unitId);
-  const lecturesForTopic = (topicId: string) => lectures.filter((l) => l.topic_id === topicId);
+  const topicIds = useMemo(() => topics.map((t) => t.id), [topics]);
+
+  const { data: lectures = [] } = useQuery({
+    queryKey: ["lectures", topicIds],
+    queryFn: async () => {
+      const { data } = await supabase.from("lectures").select("id, topic_id, title, type, duration_minutes, sort_order, is_free, is_published").in("topic_id", topicIds).eq("is_published", true).order("sort_order");
+      return (data as Lecture[]) || [];
+    },
+    enabled: topicIds.length > 0,
+  });
+
+  const topicsByUnit = useMemo(() => {
+    const map: Record<string, Topic[]> = {};
+    topics.forEach((t) => { (map[t.unit_id] ||= []).push(t); });
+    return map;
+  }, [topics]);
+
+  const lecturesByTopic = useMemo(() => {
+    const map: Record<string, Lecture[]> = {};
+    lectures.forEach((l) => { (map[l.topic_id] ||= []).push(l); });
+    return map;
+  }, [lectures]);
+
+  const loading = loadingSub || loadingUnits;
 
   if (loading) {
     return (
@@ -82,7 +91,7 @@ const SubjectDetail = () => {
         <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
           <div className="container flex h-14 items-center">
             <Link to="/courses" className="flex items-center gap-2.5">
-              <img src={logo} alt="ScholarsHub" className="h-8 w-8 rounded" />
+              <img src={logo} alt="ScholarsHub" className="h-8 w-8 rounded" loading="lazy" />
               <span className="font-display text-lg font-bold">Scholars<span className="text-primary">Hub</span></span>
             </Link>
           </div>
@@ -113,20 +122,17 @@ const SubjectDetail = () => {
             <Link to="/courses"><ArrowLeft className="h-4 w-4" /></Link>
           </Button>
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="ScholarsHub" className="h-7 w-7 rounded" />
+            <img src={logo} alt="ScholarsHub" className="h-7 w-7 rounded" loading="lazy" />
             <span className="font-display text-base font-bold">Scholars<span className="text-primary">Hub</span></span>
           </Link>
         </div>
       </header>
 
       <main className="container py-8 max-w-3xl">
-        {/* Subject header */}
         <div className="mb-8">
           <Badge variant="secondary" className="mb-3">{subject.code}</Badge>
           <h1 className="font-display text-3xl font-bold text-foreground">{subject.name}</h1>
-          {subject.description && (
-            <p className="mt-2 text-muted-foreground">{subject.description}</p>
-          )}
+          {subject.description && <p className="mt-2 text-muted-foreground">{subject.description}</p>}
           <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {units.length} Units</span>
             <span className="flex items-center gap-1"><FileText className="h-4 w-4" /> {topics.length} Topics</span>
@@ -134,7 +140,6 @@ const SubjectDetail = () => {
           </div>
         </div>
 
-        {/* Units accordion */}
         {units.length === 0 ? (
           <p className="text-center text-muted-foreground py-12">No units added yet.</p>
         ) : (
@@ -153,25 +158,22 @@ const SubjectDetail = () => {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  {topicsForUnit(unit.id).length === 0 ? (
+                  {!(topicsByUnit[unit.id]?.length) ? (
                     <p className="text-sm text-muted-foreground py-2">No topics yet.</p>
                   ) : (
                     <div className="space-y-3">
-                      {topicsForUnit(unit.id).map((topic) => (
+                      {topicsByUnit[unit.id].map((topic) => (
                         <div key={topic.id}>
                           <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                             <span className="text-muted-foreground">{unit.unit_number}.{topic.topic_number}</span>
                             {topic.title}
                           </h4>
-                          {lecturesForTopic(topic.id).length > 0 && (
+                          {(lecturesByTopic[topic.id]?.length ?? 0) > 0 && (
                             <div className="ml-6 space-y-1.5">
-                              {lecturesForTopic(topic.id).map((lec) => {
+                              {lecturesByTopic[topic.id].map((lec) => {
                                 const Icon = typeIcon[lec.type] || FileText;
                                 return (
-                                  <div
-                                    key={lec.id}
-                                    className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 transition-colors cursor-pointer"
-                                  >
+                                  <div key={lec.id} className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 transition-colors cursor-pointer">
                                     <div className={`rounded-md p-1.5 ${typeColor[lec.type] || "bg-muted"}`}>
                                       <Icon className="h-4 w-4" />
                                     </div>
