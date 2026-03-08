@@ -60,6 +60,7 @@ const AdminDashboard = () => {
           <TabsContent value="books"><AdminBooks /></TabsContent>
           <TabsContent value="subscriptions"><AdminSubscriptions /></TabsContent>
           <TabsContent value="notifications"><AdminNotifications /></TabsContent>
+          <TabsContent value="role-requests"><AdminRoleRequests /></TabsContent>
         </Tabs>
       </main>
     </div>
