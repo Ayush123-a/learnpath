@@ -51,9 +51,9 @@ const CollegeAdminBooks = () => {
   return (
     <div className="space-y-6">
       {pending.length > 0 && (
-        <Card className="border-amber-500/30">
+        <Card className="border-warning/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+            <CardTitle className="flex items-center gap-2 text-warning">
               <BookOpen className="h-5 w-5" /> Pending Approval ({pending.length})
             </CardTitle>
           </CardHeader>

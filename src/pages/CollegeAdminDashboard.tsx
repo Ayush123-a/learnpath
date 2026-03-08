@@ -34,7 +34,7 @@ const CollegeAdminDashboard = () => {
           <div className="flex items-center gap-2.5">
             <img src={logo} alt="Learn Path" className="h-8 w-8 rounded" />
             <span className="font-display text-lg font-bold">
-              <Building2 className="inline h-4 w-4 text-indigo-500 mr-1" />
+              <Building2 className="inline h-4 w-4 text-primary mr-1" />
               {collegeName || "College"} Admin
             </span>
           </div>
