@@ -32,6 +32,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 const DeploymentGuide = lazy(() => import("./pages/DeploymentGuide"));
 const ProfileSettings = lazy(() => import("./pages/ProfileSettings"));
+const JoinSession = lazy(() => import("./pages/JoinSession"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
