@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,13 +28,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const rolesCache = useRef<Record<string, AppRole[]>>({});
+
   const fetchRoles = async (userId: string) => {
+    if (rolesCache.current[userId]) {
+      setRoles(rolesCache.current[userId]);
+      return;
+    }
     const { data } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId);
     if (data) {
-      setRoles(data.map((r: { role: string }) => r.role as AppRole));
+      const parsed = data.map((r: { role: string }) => r.role as AppRole);
+      rolesCache.current[userId] = parsed;
+      setRoles(parsed);
     }
   };
 

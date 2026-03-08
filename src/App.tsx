@@ -31,7 +31,16 @@ const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 min — reduce redundant refetches
+      gcTime: 10 * 60 * 1000, // 10 min cache
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-background">
