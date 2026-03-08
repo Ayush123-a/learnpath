@@ -10,7 +10,7 @@ import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
   LogOut, GraduationCap, Bell, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar, ChevronRight,
+  CalendarDays, Clock, Calendar, ChevronRight, User,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
