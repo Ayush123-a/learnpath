@@ -30,6 +30,7 @@ const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
 const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
+const DeploymentGuide = lazy(() => import("./pages/DeploymentGuide"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
