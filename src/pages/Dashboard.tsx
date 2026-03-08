@@ -24,6 +24,7 @@ const studentFeatures = [
   { label: "Attendance", icon: CalendarDays, href: "/attendance", desc: "Track your attendance", color: "from-success to-info" },
   { label: "Study Planner", icon: Clock, href: "/study-planner", desc: "Log & track study time", color: "from-accent to-primary" },
   { label: "Timetable", icon: Calendar, href: "/timetable", desc: "Build your schedule", color: "from-info to-success" },
+  { label: "Live Sessions", icon: Radio, href: "/sessions", desc: "Join faculty sessions", color: "from-destructive to-warning" },
   { label: "Pricing & Plans", icon: CreditCard, href: "/pricing", desc: "Upgrade your plan", color: "from-warning to-destructive" },
 ];
 
