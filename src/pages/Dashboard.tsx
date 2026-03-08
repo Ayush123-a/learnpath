@@ -10,75 +10,80 @@ import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
   LogOut, GraduationCap, Bell, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar,
+  CalendarDays, Clock, Calendar, ChevronRight,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const studentFeatures = [
-  { label: "Video Lectures", icon: Play, href: "/courses", desc: "Browse & watch lectures" },
-  { label: "Notes & PPTs", icon: FileText, href: "/courses", desc: "Download study materials" },
-  { label: "Mock Tests", icon: FileQuestion, href: "/quizzes", desc: "Practice with timed tests" },
-  { label: "AI Doubt Solver", icon: Sparkles, href: "/doubt-solver", desc: "Get instant AI help" },
-  { label: "GPA Calculator", icon: Calculator, href: "/gpa-calculator", desc: "Calculate your GPA/CGPA" },
-  { label: "Digital Library", icon: BookOpen, href: "/library", desc: "Browse textbooks & notes" },
-  { label: "Attendance", icon: CalendarDays, href: "/attendance", desc: "Track your attendance" },
-  { label: "Study Planner", icon: Clock, href: "/study-planner", desc: "Log & track study time" },
-  { label: "Timetable", icon: Calendar, href: "/timetable", desc: "Build your schedule" },
-  { label: "Pricing & Plans", icon: CreditCard, href: "/pricing", desc: "Upgrade your plan" },
+  { label: "Video Lectures", icon: Play, href: "/courses", desc: "Browse & watch lectures", color: "from-primary to-info" },
+  { label: "Notes & PPTs", icon: FileText, href: "/courses", desc: "Download study materials", color: "from-accent to-warning" },
+  { label: "Mock Tests", icon: FileQuestion, href: "/quizzes", desc: "Practice with timed tests", color: "from-success to-primary" },
+  { label: "AI Doubt Solver", icon: Sparkles, href: "/doubt-solver", desc: "Get instant AI help", color: "from-info to-primary" },
+  { label: "GPA Calculator", icon: Calculator, href: "/gpa-calculator", desc: "Calculate your GPA/CGPA", color: "from-warning to-accent" },
+  { label: "Digital Library", icon: BookOpen, href: "/library", desc: "Browse textbooks & notes", color: "from-primary to-success" },
+  { label: "Attendance", icon: CalendarDays, href: "/attendance", desc: "Track your attendance", color: "from-success to-info" },
+  { label: "Study Planner", icon: Clock, href: "/study-planner", desc: "Log & track study time", color: "from-accent to-primary" },
+  { label: "Timetable", icon: Calendar, href: "/timetable", desc: "Build your schedule", color: "from-info to-success" },
+  { label: "Pricing & Plans", icon: CreditCard, href: "/pricing", desc: "Upgrade your plan", color: "from-warning to-destructive" },
 ];
 
-const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color: string; features: { label: string; icon: typeof BookOpen; href: string; desc: string }[] }> = {
+const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color: string; gradient: string; features: typeof studentFeatures }> = {
   student: {
     label: "Student",
     icon: GraduationCap,
     color: "bg-primary/10 text-primary",
+    gradient: "from-primary to-info",
     features: studentFeatures,
   },
   faculty: {
     label: "Faculty",
     icon: BookOpen,
-    color: "bg-green-500/10 text-green-700 dark:text-green-400",
+    color: "bg-success/10 text-success",
+    gradient: "from-success to-primary",
     features: [
-      { label: "Faculty Panel", icon: BookOpen, href: "/faculty", desc: "Manage all content" },
-      { label: "Upload Lectures", icon: Play, href: "/faculty", desc: "Manage course content" },
-      { label: "Create Tests", icon: FileQuestion, href: "/faculty", desc: "Build quizzes & exams" },
-      { label: "Grade Assignments", icon: FileText, href: "/faculty", desc: "Review submissions" },
-      { label: "Track Performance", icon: BarChart3, href: "/faculty", desc: "View analytics" },
+      { label: "Faculty Panel", icon: BookOpen, href: "/faculty", desc: "Manage all content", color: "from-success to-primary" },
+      { label: "Upload Lectures", icon: Play, href: "/faculty", desc: "Manage course content", color: "from-primary to-info" },
+      { label: "Create Tests", icon: FileQuestion, href: "/faculty", desc: "Build quizzes & exams", color: "from-accent to-warning" },
+      { label: "Grade Assignments", icon: FileText, href: "/faculty", desc: "Review submissions", color: "from-info to-success" },
+      { label: "Track Performance", icon: BarChart3, href: "/faculty", desc: "View analytics", color: "from-warning to-accent" },
     ],
   },
   admin: {
     label: "Admin",
     icon: Shield,
-    color: "bg-red-500/10 text-red-700 dark:text-red-400",
+    color: "bg-destructive/10 text-destructive",
+    gradient: "from-destructive to-warning",
     features: [
-      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Full admin control" },
-      { label: "Manage Users", icon: Users, href: "/admin", desc: "Roles & permissions" },
-      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure" },
-      { label: "Approve Books", icon: BookOpen, href: "/admin", desc: "Library management" },
-      { label: "Analytics", icon: BarChart3, href: "/admin", desc: "Platform insights" },
+      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Full admin control", color: "from-destructive to-warning" },
+      { label: "Manage Users", icon: Users, href: "/admin", desc: "Roles & permissions", color: "from-primary to-info" },
+      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure", color: "from-success to-primary" },
+      { label: "Approve Books", icon: BookOpen, href: "/admin", desc: "Library management", color: "from-accent to-warning" },
+      { label: "Analytics", icon: BarChart3, href: "/admin", desc: "Platform insights", color: "from-info to-primary" },
     ],
   },
   parent: {
     label: "Parent",
     icon: Heart,
-    color: "bg-pink-500/10 text-pink-700 dark:text-pink-400",
+    color: "bg-pink-500/10 text-pink-600 dark:text-pink-400",
+    gradient: "from-pink-500 to-destructive",
     features: [
-      { label: "Parent Dashboard", icon: Heart, href: "/parent", desc: "Monitor your child" },
-      { label: "Attendance", icon: BarChart3, href: "/parent", desc: "Track attendance" },
-      { label: "Performance", icon: BarChart3, href: "/parent", desc: "Quiz & test scores" },
-      { label: "Study Time", icon: BarChart3, href: "/parent", desc: "Daily study hours" },
-      { label: "Weak Subject Alerts", icon: BarChart3, href: "/parent", desc: "Get notified" },
+      { label: "Parent Dashboard", icon: Heart, href: "/parent", desc: "Monitor your child", color: "from-pink-500 to-destructive" },
+      { label: "Attendance", icon: CalendarDays, href: "/parent", desc: "Track attendance", color: "from-success to-info" },
+      { label: "Performance", icon: BarChart3, href: "/parent", desc: "Quiz & test scores", color: "from-primary to-info" },
+      { label: "Study Time", icon: Clock, href: "/parent", desc: "Daily study hours", color: "from-accent to-warning" },
+      { label: "Weak Subject Alerts", icon: Bell, href: "/parent", desc: "Get notified", color: "from-warning to-destructive" },
     ],
   },
   content_creator: {
     label: "Content Creator",
     icon: Palette,
-    color: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
+    color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    gradient: "from-purple-500 to-primary",
     features: [
-      { label: "Creator Studio", icon: Palette, href: "/creator", desc: "Upload books & news" },
-      { label: "Upload Books", icon: BookOpen, href: "/creator", desc: "Add textbooks & notes" },
-      { label: "Create News", icon: FileText, href: "/creator", desc: "Post announcements" },
-      { label: "My Content", icon: BarChart3, href: "/creator", desc: "Track your uploads" },
+      { label: "Creator Studio", icon: Palette, href: "/creator", desc: "Upload books & news", color: "from-purple-500 to-primary" },
+      { label: "Upload Books", icon: BookOpen, href: "/creator", desc: "Add textbooks & notes", color: "from-primary to-info" },
+      { label: "Create News", icon: FileText, href: "/creator", desc: "Post announcements", color: "from-accent to-warning" },
+      { label: "My Content", icon: BarChart3, href: "/creator", desc: "Track your uploads", color: "from-success to-primary" },
     ],
   },
 };
@@ -88,29 +93,35 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </div>
       </div>
     );
   }
 
   if (!user) return <Navigate to="/auth" replace />;
 
-
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <img src={logo} alt="Learn Path" className="h-8 w-8 rounded" />
-            <span className="font-display text-lg font-bold">
-              Learn<span className="text-primary">Path</span>
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
+        <div className="container flex h-16 items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <img src={logo} alt="Learn Path" className="h-9 w-9 rounded-lg shadow-sm" />
+            <span className="font-display text-xl font-bold">
+              Learn<span className="gradient-text">Path</span>
             </span>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="icon"><Bell className="h-4 w-4" /></Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-4 w-4" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-destructive" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground hover:text-foreground">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
@@ -119,52 +130,63 @@ const Dashboard = () => {
 
       <main className="container py-8">
         <AdBanner slot="dashboard-top" format="horizontal" className="mb-6" />
-        <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-foreground">
-            Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}!
-          </h1>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {roles.map((role) => {
-              const rc = roleConfig[role];
-              return (
-                <Badge key={role} variant="secondary" className={`${rc.color} gap-1.5`}>
-                  <rc.icon className="h-3 w-3" /> {rc.label}
-                </Badge>
-              );
-            })}
+
+        {/* Welcome */}
+        <div className="relative rounded-2xl overflow-hidden mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-info" />
+          <div className="absolute inset-0 section-pattern opacity-10" />
+          <div className="relative p-8 md:p-10">
+            <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
+              Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}! 👋
+            </h1>
+            <p className="mt-2 text-primary-foreground/70 max-w-lg">
+              Continue your learning journey. Pick up where you left off.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {roles.map((role) => {
+                const rc = roleConfig[role];
+                return (
+                  <Badge key={role} className="bg-primary-foreground/20 text-primary-foreground border-0 gap-1.5 backdrop-blur-sm">
+                    <rc.icon className="h-3 w-3" /> {rc.label}
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
         </div>
 
+        {/* Role sections */}
         {roles.map((role) => {
           const rc = roleConfig[role];
           const RoleIcon = rc.icon;
           return (
-            <div key={role} className="mb-8">
-              <Card className="mb-4">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 font-display text-xl">
-                    <RoleIcon className="h-5 w-5 text-primary" /> {rc.label} Dashboard
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">Quick access to your {rc.label.toLowerCase()} tools and features.</p>
-                </CardContent>
-              </Card>
+            <div key={role} className="mb-10">
+              <div className="flex items-center gap-3 mb-5">
+                <div className={`rounded-xl bg-gradient-to-br ${rc.gradient} p-2.5`}>
+                  <RoleIcon className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <h2 className="font-display text-2xl font-bold text-foreground">{rc.label} Tools</h2>
+              </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {rc.features.map((feature) => (
+                {rc.features.map((feature, idx) => (
                   <Link key={feature.label} to={feature.href}>
-                    <Card className="group hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full">
-                      <CardContent className="flex items-center gap-4 p-6">
-                        <div className={`rounded-lg p-3 ${rc.color}`}>
-                          <feature.icon className="h-5 w-5" />
+                    <div
+                      className="glass-card group overflow-hidden h-full"
+                      style={{ animationDelay: `${idx * 60}ms` }}
+                    >
+                      <div className={`h-1 bg-gradient-to-r ${feature.color}`} />
+                      <div className="p-5 flex items-center gap-4">
+                        <div className={`rounded-xl bg-gradient-to-br ${feature.color} p-3 shadow-sm flex-shrink-0`}>
+                          <feature.icon className="h-5 w-5 text-primary-foreground" />
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground">{feature.label}</h3>
-                          <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{feature.label}</h3>
+                          <p className="text-sm text-muted-foreground truncate">{feature.desc}</p>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                      </div>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -172,7 +194,7 @@ const Dashboard = () => {
           );
         })}
 
-        {/* News Feed Section */}
+        {/* News Feed */}
         <div className="mb-8">
           <NewsFeed />
         </div>
