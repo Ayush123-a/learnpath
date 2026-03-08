@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   BookOpen, Search, ArrowLeft, Star, Lock,
   FileText, BookMarked, FlaskConical, FileQuestion,
 } from "lucide-react";
@@ -36,21 +39,52 @@ interface Book {
   cover_url: string | null;
   tags: string[];
   description: string | null;
+  degree_id: string | null;
+  semester_id: string | null;
 }
 
 const Library = () => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedDegree, setSelectedDegree] = useState("all");
+  const [selectedSemester, setSelectedSemester] = useState("all");
 
   const { data: books = [], isLoading: loading } = useQuery({
     queryKey: ["library-books"],
     queryFn: async () => {
       const { data } = await supabase
         .from("books")
-        .select("id, title, author, edition, publication, book_type, is_required, is_free, total_pages, cover_url, tags, description")
+        .select("id, title, author, edition, publication, book_type, is_required, is_free, total_pages, cover_url, tags, description, degree_id, semester_id")
         .eq("is_published", true)
         .order("created_at", { ascending: false });
       return (data as Book[]) || [];
+    },
+  });
+
+  const { data: degrees = [] } = useQuery({
+    queryKey: ["library-degrees"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("degrees")
+        .select("id, name, code")
+        .eq("is_active", true)
+        .order("name");
+      return data || [];
+    },
+  });
+
+  const { data: semesters = [] } = useQuery({
+    queryKey: ["library-semesters", selectedDegree],
+    queryFn: async () => {
+      let query = supabase
+        .from("semesters")
+        .select("id, label, semester_number, year_id, years!inner(degree_id)")
+        .order("semester_number");
+      if (selectedDegree !== "all") {
+        query = query.eq("years.degree_id", selectedDegree);
+      }
+      const { data } = await query;
+      return data || [];
     },
   });
 
@@ -60,8 +94,10 @@ const Library = () => {
       if (!b.title.toLowerCase().includes(q) && !b.author.toLowerCase().includes(q) && !(b.tags || []).some(t => t.toLowerCase().includes(q))) return false;
     }
     if (activeTab !== "all" && b.book_type !== activeTab) return false;
+    if (selectedDegree !== "all" && b.degree_id !== selectedDegree) return false;
+    if (selectedSemester !== "all" && b.semester_id !== selectedSemester) return false;
     return true;
-  }), [books, search, activeTab]);
+  }), [books, search, activeTab, selectedDegree, selectedSemester]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -72,7 +108,7 @@ const Library = () => {
             <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
           </Link>
           <h1 className="font-display text-lg font-bold">Digital Library</h1>
-          <span className="ml-auto text-xs text-muted-foreground">{books.length} books</span>
+          <span className="ml-auto text-xs text-muted-foreground">{filtered.length} / {books.length} books</span>
         </div>
       </header>
 
@@ -81,6 +117,33 @@ const Library = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Search books, authors, tags..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+
+        {/* Degree & Semester filters */}
+        <div className="flex gap-3 flex-wrap">
+          <Select value={selectedDegree} onValueChange={(v) => { setSelectedDegree(v); setSelectedSemester("all"); }}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="All Degrees" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Degrees</SelectItem>
+              {degrees.map((d: any) => (
+                <SelectItem key={d.id} value={d.id}>{d.code} – {d.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All Semesters" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Semesters</SelectItem>
+              {semesters.map((s: any) => (
+                <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Book type tabs */}
@@ -110,7 +173,7 @@ const Library = () => {
               <div className="py-16 text-center">
                 <BookOpen className="mx-auto h-12 w-12 text-muted-foreground/50" />
                 <h3 className="mt-4 font-display text-lg font-semibold">No books found</h3>
-                <p className="text-sm text-muted-foreground">Try adjusting your search or check back later.</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your search or filters.</p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
