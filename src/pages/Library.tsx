@@ -44,39 +44,40 @@ interface Semester { id: string; label: string; semester_number: number; year_id
 interface Subject { id: string; name: string; code: string; semester_id: string; }
 
 const Library = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [degrees, setDegrees] = useState<Degree[]>([]);
-  const [semesters, setSemesters] = useState<Semester[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedDegree, setSelectedDegree] = useState<string>("all");
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("all");
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const { data: libraryData, isLoading: loading } = useQuery({
+    queryKey: ["library-data"],
+    queryFn: async () => {
       const [booksRes, degreesRes, semestersRes, subjectsRes] = await Promise.all([
-        supabase.from("books").select("*").eq("is_published", true),
+        supabase.from("books").select("id, title, author, edition, publication, book_type, is_required, is_free, total_pages, cover_url, tags, description, subject_id").eq("is_published", true),
         supabase.from("degrees").select("id, name, code").eq("is_active", true),
         supabase.from("semesters").select("id, label, semester_number, year_id"),
         supabase.from("subjects").select("id, name, code, semester_id").eq("is_active", true),
       ]);
-      if (booksRes.data) setBooks(booksRes.data as Book[]);
-      if (degreesRes.data) setDegrees(degreesRes.data);
-      if (semestersRes.data) setSemesters(semestersRes.data);
-      if (subjectsRes.data) setSubjects(subjectsRes.data);
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
+      return {
+        books: (booksRes.data as Book[]) || [],
+        degrees: degreesRes.data || [],
+        semesters: semestersRes.data || [],
+        subjects: subjectsRes.data || [],
+      };
+    },
+  });
 
-  const filtered = books.filter((b) => {
+  const books = libraryData?.books || [];
+  const degrees = libraryData?.degrees || [];
+  const semesters = libraryData?.semesters || [];
+  const subjects = libraryData?.subjects || [];
+
+  const filtered = useMemo(() => books.filter((b) => {
     if (search && !b.title.toLowerCase().includes(search.toLowerCase()) && !b.author.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeTab !== "all" && b.book_type !== activeTab) return false;
     if (selectedSubject !== "all" && b.subject_id !== selectedSubject) return false;
     return true;
-  });
+  }), [books, search, activeTab, selectedSubject]);
 
   return (
     <div className="min-h-screen bg-background">
