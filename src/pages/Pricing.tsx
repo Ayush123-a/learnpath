@@ -99,7 +99,7 @@ const Pricing = () => {
         </div>
 
         {/* Plans */}
-        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto mb-12">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto mb-12">
           {plans.map(plan => {
             const isCurrent = currentPlan?.id === plan.id;
             const isPopular = plan.slug === "yearly";
