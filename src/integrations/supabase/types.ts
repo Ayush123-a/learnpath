@@ -866,6 +866,106 @@ export type Database = {
           },
         ]
       }
+      session_participants: {
+        Row: {
+          attendance_marked: boolean
+          id: string
+          joined_at: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          attendance_marked?: boolean
+          id?: string
+          joined_at?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          attendance_marked?: boolean
+          id?: string
+          joined_at?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          duration_minutes: number | null
+          ended_at: string | null
+          id: string
+          invite_code: string
+          materials_url: string | null
+          meeting_link: string | null
+          notes_content: string | null
+          recording_link: string | null
+          scheduled_at: string
+          session_type: string
+          status: string
+          subject_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          id?: string
+          invite_code: string
+          materials_url?: string | null
+          meeting_link?: string | null
+          notes_content?: string | null
+          recording_link?: string | null
+          scheduled_at: string
+          session_type?: string
+          status?: string
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          id?: string
+          invite_code?: string
+          materials_url?: string | null
+          meeting_link?: string | null
+          notes_content?: string | null
+          recording_link?: string | null
+          scheduled_at?: string
+          session_type?: string
+          status?: string
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_sessions: {
         Row: {
           created_at: string
