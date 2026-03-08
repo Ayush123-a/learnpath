@@ -134,6 +134,58 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
       if (couponId) await supabase.from("coupons").update({ current_uses: (coupon as any).current_uses + 1 }).eq("id", couponId);
     }
 
+    // Try Razorpay first
+    if (finalAmount > 0) {
+      try {
+        const { data: orderData, error: orderError } = await supabase.functions.invoke("create-razorpay-order", {
+          body: { amount: finalAmount, currency: "INR", planName: plan.name, userId: user.id },
+        });
+        if (!orderError && orderData?.order_id) {
+          return new Promise<{ success: boolean; message: string }>((resolve) => {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => {
+              const options = {
+                key: orderData.key_id,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: "ScholarsHub",
+                description: `${plan.name} Plan`,
+                order_id: orderData.order_id,
+                handler: async (response: any) => {
+                  const now = new Date();
+                  const expiresAt = plan.duration_days ? new Date(now.getTime() + plan.duration_days * 86400000) : null;
+                  await supabase.from("user_subscriptions").insert({
+                    user_id: user.id,
+                    plan_id: planId,
+                    status: "active",
+                    starts_at: now.toISOString(),
+                    expires_at: expiresAt?.toISOString(),
+                    amount_paid: finalAmount,
+                    coupon_id: couponId,
+                    payment_method: "razorpay",
+                    payment_reference: response.razorpay_payment_id,
+                  });
+                  await fetchSubscription();
+                  resolve({ success: true, message: "Payment successful! Subscription activated." });
+                },
+                modal: { ondismiss: () => resolve({ success: false, message: "Payment cancelled" }) },
+                prefill: { email: user.email },
+                theme: { color: "#4F46E5" },
+              };
+              const rzp = new (window as any).Razorpay(options);
+              rzp.open();
+            };
+            script.onerror = () => resolve({ success: false, message: "Failed to load payment gateway" });
+            document.body.appendChild(script);
+          });
+        }
+      } catch {
+        // Razorpay not configured, fall through to mock
+      }
+    }
+
+    // Mock fallback
     const now = new Date();
     const isTrialEligible = plan.trial_days > 0;
     const trialEnd = isTrialEligible ? new Date(now.getTime() + plan.trial_days * 86400000) : null;

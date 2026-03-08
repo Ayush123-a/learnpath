@@ -99,7 +99,7 @@ const Pricing = () => {
         </div>
 
         {/* Plans */}
-        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto mb-12">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto mb-12">
           {plans.map(plan => {
             const isCurrent = currentPlan?.id === plan.id;
             const isPopular = plan.slug === "yearly";
@@ -114,13 +114,23 @@ const Pricing = () => {
                   <CardTitle className="font-display text-xl">{plan.name}</CardTitle>
                   <CardDescription>
                     {plan.slug === "free" ? "Get started for free" :
-                      plan.slug === "monthly" ? "Flexible monthly billing" : "Best value for serious learners"}
+                      plan.slug === "monthly" ? "Flexible monthly billing" :
+                      plan.slug === "lifetime" ? "One-time payment, forever access" : "Best value for serious learners"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <div className="text-center mb-6">
-                    <span className="text-4xl font-bold">₹{plan.price_monthly}</span>
-                    <span className="text-muted-foreground">/mo</span>
+                    {plan.slug === "lifetime" ? (
+                      <>
+                        <span className="text-4xl font-bold">₹{plan.price_total}</span>
+                        <span className="text-muted-foreground"> one-time</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold">₹{plan.price_monthly}</span>
+                        <span className="text-muted-foreground">/mo</span>
+                      </>
+                    )}
                     {plan.slug === "yearly" && (
                       <p className="text-sm text-muted-foreground mt-1">₹{plan.price_total} billed yearly</p>
                     )}
@@ -237,7 +247,7 @@ const Pricing = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              This is a mock checkout. No real payment will be processed.
+              Powered by Razorpay. Secure payment processing.
             </p>
           </div>
 

@@ -1,5 +1,6 @@
 import { useAuth, AppRole } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
+import AdBanner from "@/components/ads/AdBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -114,6 +115,7 @@ const Dashboard = () => {
       </header>
 
       <main className="container py-8">
+        <AdBanner slot="dashboard-top" format="horizontal" className="mb-6" />
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">
             Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}!
