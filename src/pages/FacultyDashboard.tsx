@@ -45,10 +45,11 @@ const FacultyDashboard = () => {
 
       <main className="container py-6">
         <Tabs defaultValue="lectures" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="lectures">Lectures</TabsTrigger>
             <TabsTrigger value="quizzes">Tests</TabsTrigger>
             <TabsTrigger value="assignments">Assignments</TabsTrigger>
+            <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
 
@@ -60,6 +61,9 @@ const FacultyDashboard = () => {
           </TabsContent>
           <TabsContent value="assignments">
             <FacultyAssignments />
+          </TabsContent>
+          <TabsContent value="attendance">
+            <FacultyAttendance />
           </TabsContent>
           <TabsContent value="performance">
             <FacultyPerformance />
