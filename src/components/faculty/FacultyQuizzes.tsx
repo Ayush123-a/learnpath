@@ -51,6 +51,15 @@ const FacultyQuizzes = () => {
     },
   });
 
+  const { data: questions } = useQuery({
+    queryKey: ["quiz-questions", selectedQuizId],
+    enabled: !!selectedQuizId,
+    queryFn: async () => {
+      const { data } = await supabase.from("questions").select("*").eq("quiz_id", selectedQuizId).order("sort_order");
+      return data || [];
+    },
+  });
+
   // Fetch attempts for grading
   const { data: attempts } = useQuery({
     queryKey: ["quiz-attempts-grading", gradingQuizId],
