@@ -95,9 +95,9 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
     color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
     gradient: "from-indigo-500 to-primary",
     features: [
-      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Manage your college", color: "from-indigo-500 to-primary" },
-      { label: "Manage Users", icon: Users, href: "/admin", desc: "College users & roles", color: "from-primary to-info" },
-      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure", color: "from-success to-primary" },
+      { label: "College Panel", icon: Building2, href: "/college-admin", desc: "Manage your college", color: "from-indigo-500 to-primary" },
+      { label: "Manage Users", icon: Users, href: "/college-admin", desc: "College users & roles", color: "from-primary to-info" },
+      { label: "Manage Degrees", icon: GraduationCap, href: "/college-admin", desc: "Course structure", color: "from-success to-primary" },
     ],
   },
 };

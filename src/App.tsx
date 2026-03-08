@@ -24,6 +24,7 @@ const FacultyDashboard = lazy(() => import("./pages/FacultyDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ParentDashboard = lazy(() => import("./pages/ParentDashboard"));
 const ContentCreatorDashboard = lazy(() => import("./pages/ContentCreatorDashboard"));
+const CollegeAdminDashboard = lazy(() => import("./pages/CollegeAdminDashboard"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const AttendanceTracker = lazy(() => import("./pages/AttendanceTracker"));
 const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
@@ -84,6 +85,7 @@ const App = () => (
                 <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/parent" element={<ProtectedRoute requiredRole="parent"><ParentDashboard /></ProtectedRoute>} />
                 <Route path="/creator" element={<ProtectedRoute requiredRole="content_creator"><ContentCreatorDashboard /></ProtectedRoute>} />
+                <Route path="/college-admin" element={<ProtectedRoute requiredRole="college_admin"><CollegeAdminDashboard /></ProtectedRoute>} />
                 <Route path="/deployment-guide" element={<ProtectedRoute requiredRole="admin"><DeploymentGuide /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
                 <Route path="/sessions" element={<ProtectedRoute><JoinSession /></ProtectedRoute>} />
