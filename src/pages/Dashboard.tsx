@@ -3,6 +3,7 @@ import { Navigate, Link } from "react-router-dom";
 import AdBanner from "@/components/ads/AdBanner";
 import NewsFeed from "@/components/NewsFeed";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
