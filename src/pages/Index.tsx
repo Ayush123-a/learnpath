@@ -1,4 +1,4 @@
-import { GraduationCap, BookOpen, Users, Trophy, ArrowRight, Sparkles, Play, Shield } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Trophy, ArrowRight, Sparkles, Play, Shield, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
