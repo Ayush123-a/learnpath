@@ -1,11 +1,11 @@
 {
-  "name": "ScholarsHub",
-  "short_name": "ScholarsHub",
+  "name": "Learn Path",
+  "short_name": "LearnPath",
   "description": "India's university learning platform for BCA, BBA, BCom, MCA & MBA students",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4F46E5",
+  "background_color": "#0a0e17",
+  "theme_color": "#2563EB",
   "orientation": "portrait-primary",
   "icons": [
     {
