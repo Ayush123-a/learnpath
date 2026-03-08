@@ -159,7 +159,7 @@ const Dashboard = () => {
               Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}! 👋
             </h1>
             <p className="mt-1.5 md:mt-2 text-sm md:text-base text-primary-foreground/70 max-w-lg">
-              Continue your learning journey.
+              {collegeName ? `${collegeName} · ` : ""}Continue your learning journey.
             </p>
             <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5 md:gap-2">
               {roles.map((role) => {
