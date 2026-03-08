@@ -109,25 +109,28 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <img src={logo} alt="Learn Path" className="h-9 w-9 rounded-lg shadow-sm" />
-            <span className="font-display text-xl font-bold">
+        <div className="container flex h-14 md:h-16 items-center justify-between px-3 md:px-6">
+          <Link to="/" className="flex items-center gap-2 group">
+            <img src={logo} alt="Learn Path" className="h-8 w-8 md:h-9 md:w-9 rounded-lg shadow-sm" />
+            <span className="font-display text-lg md:text-xl font-bold">
               Learn<span className="gradient-text">Path</span>
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 md:gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9">
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-destructive" />
             </Button>
             <Link to="/profile">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
                 <User className="h-4 w-4" />
               </Button>
             </Link>
-            <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" onClick={signOut} className="h-9 w-9 text-muted-foreground hover:text-foreground md:hidden">
+              <LogOut className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:flex gap-2 text-muted-foreground hover:text-foreground">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
