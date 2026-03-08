@@ -255,6 +255,7 @@ const AdminColleges = () => {
             </Card>
           ))}
         </div>
+        </>
       )}
     </div>
   );
