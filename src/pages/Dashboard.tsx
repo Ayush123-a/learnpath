@@ -9,9 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
-  LogOut, GraduationCap, Bell, Play, FileText,
+  LogOut, GraduationCap, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar, ChevronRight, User, Radio,
+  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
