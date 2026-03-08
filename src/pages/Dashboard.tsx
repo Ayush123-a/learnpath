@@ -89,10 +89,21 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
       { label: "My Content", icon: BarChart3, href: "/creator", desc: "Track your uploads", color: "from-success to-primary" },
     ],
   },
+  college_admin: {
+    label: "College Admin",
+    icon: Building2,
+    color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+    gradient: "from-indigo-500 to-primary",
+    features: [
+      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Manage your college", color: "from-indigo-500 to-primary" },
+      { label: "Manage Users", icon: Users, href: "/admin", desc: "College users & roles", color: "from-primary to-info" },
+      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure", color: "from-success to-primary" },
+    ],
+  },
 };
 
 const Dashboard = () => {
-  const { user, roles, loading, signOut } = useAuth();
+  const { user, roles, collegeName, loading, signOut } = useAuth();
 
   if (loading) {
     return (
