@@ -329,7 +329,15 @@ const ContentCreatorDashboard = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                {/* Document Scanner */}
+                <div className="space-y-2">
+                  <Label>Or Scan Physical Pages</Label>
+                  <DocumentScanner onPdfReady={(file) => { setBookFile(file); toast({ title: "Scanned PDF ready", description: `${file.name} is set as the book file.` }); }} />
+                  {bookFile && bookFile.name.startsWith("scanned-") && (
+                    <p className="text-xs text-primary flex items-center gap-1">✓ Scanned PDF attached: {bookFile.name}</p>
+                  )}
+                </div>
+
                   <div className="flex items-center gap-2">
                     <Switch checked={bookForm.is_free} onCheckedChange={v => setBookForm(f => ({ ...f, is_free: v }))} />
                     <Label>Free book</Label>
