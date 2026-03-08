@@ -187,7 +187,10 @@ const FacultyQuizzes = () => {
                       <p className="text-xs text-muted-foreground">{q.subjects?.name} · {q.duration_minutes}min · {q.quiz_type}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Button variant="outline" size="sm" className="gap-1" onClick={() => setGradingQuizId(gradingQuizId === q.id ? "" : q.id)}>
+                      <ClipboardCheck className="h-3 w-3" /> Grade
+                    </Button>
                     <Dialog open={questionOpen && selectedQuizId === q.id} onOpenChange={(v) => { setQuestionOpen(v); if (v) setSelectedQuizId(q.id); }}>
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-1"><PlusCircle className="h-3 w-3" /> Questions</Button>
