@@ -268,6 +268,50 @@ const FacultyQuizzes = () => {
           ))}
         </div>
       )}
+
+      {/* Grading Panel */}
+      {gradingQuizId && (
+        <Card className="mt-6">
+          <CardContent className="p-4 space-y-4">
+            <h3 className="font-semibold flex items-center gap-2"><ClipboardCheck className="h-4 w-4 text-primary" /> Submissions & Grading</h3>
+            {!attempts?.length ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No submissions yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {attempts.map((attempt: any) => {
+                  const profile = profiles?.find((p: any) => p.user_id === attempt.user_id);
+                  const attemptAnswers = (attempt.answers || {}) as Record<string, string>;
+                  return (
+                    <Card key={attempt.id}>
+                      <CardContent className="p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-sm">{profile?.full_name || profile?.email || "Unknown"}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Score: {attempt.score ?? "—"}/{attempt.total_marks} · {attempt.completed_at ? new Date(attempt.completed_at).toLocaleDateString() : ""}
+                            </p>
+                          </div>
+                          <Badge variant={attempt.score >= (attempt.total_marks * 0.4) ? "default" : "destructive"}>
+                            {attempt.score != null ? `${Math.round((attempt.score / attempt.total_marks) * 100)}%` : "Pending"}
+                          </Badge>
+                        </div>
+                        {/* Show theory answers for manual grading */}
+                        {questions?.filter((q: any) => q.question_type === "theory").map((q: any) => (
+                          <div key={q.id} className="bg-muted/50 rounded p-2 text-sm">
+                            <p className="font-medium text-xs text-foreground">Q: {q.question_text}</p>
+                            <p className="text-muted-foreground mt-1 whitespace-pre-wrap text-xs">{attemptAnswers[q.id] || "— Not answered"}</p>
+                            {q.correct_answer && <p className="text-xs text-primary mt-1">Model: {q.correct_answer}</p>}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
