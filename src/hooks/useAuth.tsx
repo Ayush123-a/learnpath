@@ -52,6 +52,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fetchCollege = async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("college_id, colleges(name)")
+      .eq("user_id", userId)
+      .single();
+    if (data) {
+      setCollegeId(data.college_id);
+      setCollegeName((data as any).colleges?.name || null);
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
