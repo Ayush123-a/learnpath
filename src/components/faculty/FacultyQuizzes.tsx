@@ -12,7 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, FileQuestion, Trash2, PlusCircle } from "lucide-react";
+import { Plus, FileQuestion, Trash2, PlusCircle, ClipboardCheck } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea as GradeTextarea } from "@/components/ui/textarea";
 
 const FacultyQuizzes = () => {
   const { user } = useAuth();
@@ -26,8 +28,9 @@ const FacultyQuizzes = () => {
   });
   const [qForm, setQForm] = useState({
     question_text: "", correct_answer: "", explanation: "", marks: 1,
-    options: ["", "", "", ""],
+    question_type: "mcq", options: ["", "", "", ""],
   });
+  const [gradingQuizId, setGradingQuizId] = useState("");
 
   const { data: subjects } = useQuery({
     queryKey: ["all-subjects"],
@@ -57,6 +60,31 @@ const FacultyQuizzes = () => {
     },
   });
 
+  // Fetch attempts for grading
+  const { data: attempts } = useQuery({
+    queryKey: ["quiz-attempts-grading", gradingQuizId],
+    enabled: !!gradingQuizId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("quiz_attempts")
+        .select("*")
+        .eq("quiz_id", gradingQuizId)
+        .eq("is_completed", true)
+        .order("completed_at", { ascending: false });
+      return data || [];
+    },
+  });
+
+  // Fetch profiles for display names
+  const { data: profiles } = useQuery({
+    queryKey: ["profiles-for-grading", gradingQuizId],
+    enabled: !!gradingQuizId && !!attempts?.length,
+    queryFn: async () => {
+      const userIds = [...new Set(attempts!.map(a => a.user_id))];
+      const { data } = await supabase.from("profiles").select("user_id, full_name, email").in("user_id", userIds);
+      return data || [];
+    },
+  });
   const createQuiz = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("quizzes").insert({
@@ -86,10 +114,11 @@ const FacultyQuizzes = () => {
       const { error } = await supabase.from("questions").insert({
         quiz_id: selectedQuizId,
         question_text: qForm.question_text,
+        question_type: qForm.question_type,
         correct_answer: qForm.correct_answer,
         explanation: qForm.explanation || null,
         marks: qForm.marks,
-        options: qForm.options.filter(Boolean),
+        options: qForm.question_type === "mcq" ? qForm.options.filter(Boolean) : [],
         sort_order: count + 1,
       });
       if (error) throw error;
@@ -97,7 +126,7 @@ const FacultyQuizzes = () => {
     onSuccess: () => {
       toast.success("Question added!");
       queryClient.invalidateQueries({ queryKey: ["quiz-questions", selectedQuizId] });
-      setQForm({ question_text: "", correct_answer: "", explanation: "", marks: 1, options: ["", "", "", ""] });
+      setQForm({ question_text: "", correct_answer: "", explanation: "", marks: 1, question_type: "mcq", options: ["", "", "", ""] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -143,14 +172,15 @@ const FacultyQuizzes = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div><Label>Duration (min)</Label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })} /></div>
                 <div><Label>Type</Label>
-                  <Select value={form.quiz_type} onValueChange={(v) => setForm({ ...form, quiz_type: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unit_quiz">Unit Quiz</SelectItem>
-                      <SelectItem value="semester_exam">Semester Exam</SelectItem>
-                      <SelectItem value="practice">Practice</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <Select value={form.quiz_type} onValueChange={(v) => setForm({ ...form, quiz_type: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unit_quiz">Unit Quiz</SelectItem>
+                        <SelectItem value="semester_exam">Semester Exam</SelectItem>
+                        <SelectItem value="mock_exam">Mock Exam</SelectItem>
+                        <SelectItem value="practice">Practice</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -182,7 +212,10 @@ const FacultyQuizzes = () => {
                       <p className="text-xs text-muted-foreground">{q.subjects?.name} · {q.duration_minutes}min · {q.quiz_type}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Button variant="outline" size="sm" className="gap-1" onClick={() => setGradingQuizId(gradingQuizId === q.id ? "" : q.id)}>
+                      <ClipboardCheck className="h-3 w-3" /> Grade
+                    </Button>
                     <Dialog open={questionOpen && selectedQuizId === q.id} onOpenChange={(v) => { setQuestionOpen(v); if (v) setSelectedQuizId(q.id); }}>
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-1"><PlusCircle className="h-3 w-3" /> Questions</Button>
@@ -198,13 +231,23 @@ const FacultyQuizzes = () => {
                           ))}
                           <hr />
                           <h4 className="font-semibold text-sm">Add Question</h4>
+                          <div><Label>Question Type</Label>
+                            <Select value={qForm.question_type} onValueChange={(v) => setQForm({ ...qForm, question_type: v })}>
+                              <SelectTrigger><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="mcq">MCQ</SelectItem>
+                                <SelectItem value="numerical">Numerical</SelectItem>
+                                <SelectItem value="theory">Theory</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                           <div><Label>Question</Label><Textarea value={qForm.question_text} onChange={(e) => setQForm({ ...qForm, question_text: e.target.value })} /></div>
-                          {qForm.options.map((opt, i) => (
+                          {qForm.question_type === "mcq" && qForm.options.map((opt, i) => (
                             <div key={i}><Label>Option {String.fromCharCode(65 + i)}</Label>
                               <Input value={opt} onChange={(e) => { const o = [...qForm.options]; o[i] = e.target.value; setQForm({ ...qForm, options: o }); }} />
                             </div>
                           ))}
-                          <div><Label>Correct Answer</Label><Input value={qForm.correct_answer} onChange={(e) => setQForm({ ...qForm, correct_answer: e.target.value })} placeholder="e.g. A" /></div>
+                          <div><Label>{qForm.question_type === "theory" ? "Model Answer" : "Correct Answer"}</Label><Input value={qForm.correct_answer} onChange={(e) => setQForm({ ...qForm, correct_answer: e.target.value })} placeholder={qForm.question_type === "mcq" ? "e.g. Option A text" : qForm.question_type === "numerical" ? "e.g. 42" : "Model answer for reference"} /></div>
                           <div><Label>Explanation</Label><Textarea value={qForm.explanation} onChange={(e) => setQForm({ ...qForm, explanation: e.target.value })} /></div>
                           <div><Label>Marks</Label><Input type="number" value={qForm.marks} onChange={(e) => setQForm({ ...qForm, marks: +e.target.value })} /></div>
                           <Button onClick={() => addQuestion.mutate()} disabled={!qForm.question_text || !qForm.correct_answer || addQuestion.isPending} className="w-full">
@@ -224,6 +267,50 @@ const FacultyQuizzes = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {/* Grading Panel */}
+      {gradingQuizId && (
+        <Card className="mt-6">
+          <CardContent className="p-4 space-y-4">
+            <h3 className="font-semibold flex items-center gap-2"><ClipboardCheck className="h-4 w-4 text-primary" /> Submissions & Grading</h3>
+            {!attempts?.length ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No submissions yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {attempts.map((attempt: any) => {
+                  const profile = profiles?.find((p: any) => p.user_id === attempt.user_id);
+                  const attemptAnswers = (attempt.answers || {}) as Record<string, string>;
+                  return (
+                    <Card key={attempt.id}>
+                      <CardContent className="p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-sm">{profile?.full_name || profile?.email || "Unknown"}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Score: {attempt.score ?? "—"}/{attempt.total_marks} · {attempt.completed_at ? new Date(attempt.completed_at).toLocaleDateString() : ""}
+                            </p>
+                          </div>
+                          <Badge variant={attempt.score >= (attempt.total_marks * 0.4) ? "default" : "destructive"}>
+                            {attempt.score != null ? `${Math.round((attempt.score / attempt.total_marks) * 100)}%` : "Pending"}
+                          </Badge>
+                        </div>
+                        {/* Show theory answers for manual grading */}
+                        {questions?.filter((q: any) => q.question_type === "theory").map((q: any) => (
+                          <div key={q.id} className="bg-muted/50 rounded p-2 text-sm">
+                            <p className="font-medium text-xs text-foreground">Q: {q.question_text}</p>
+                            <p className="text-muted-foreground mt-1 whitespace-pre-wrap text-xs">{attemptAnswers[q.id] || "— Not answered"}</p>
+                            {q.correct_answer && <p className="text-xs text-primary mt-1">Model: {q.correct_answer}</p>}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
