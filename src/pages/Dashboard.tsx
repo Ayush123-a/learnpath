@@ -115,6 +115,7 @@ const Dashboard = () => {
       </header>
 
       <main className="container py-8">
+        <AdBanner slot="dashboard-top" format="horizontal" className="mb-6" />
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">
             Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}!

@@ -247,7 +247,7 @@ const Pricing = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              This is a mock checkout. No real payment will be processed.
+              Powered by Razorpay. Secure payment processing.
             </p>
           </div>
 
