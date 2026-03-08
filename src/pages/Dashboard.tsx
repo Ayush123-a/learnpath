@@ -3,14 +3,15 @@ import { Navigate, Link } from "react-router-dom";
 import AdBanner from "@/components/ads/AdBanner";
 import NewsFeed from "@/components/NewsFeed";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
-  LogOut, GraduationCap, Bell, Play, FileText,
+  LogOut, GraduationCap, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar, ChevronRight, User, Radio,
+  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -119,10 +120,7 @@ const Dashboard = () => {
           </Link>
           <div className="flex items-center gap-1 md:gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative h-9 w-9">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-destructive" />
-            </Button>
+            <NotificationBell />
             <Link to="/profile">
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <User className="h-4 w-4" />
