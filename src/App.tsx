@@ -29,6 +29,7 @@ const AttendanceTracker = lazy(() => import("./pages/AttendanceTracker"));
 const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
 const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/news" element={<NewsPage />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/subject/:subjectId" element={<SubjectDetail />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
