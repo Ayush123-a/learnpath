@@ -26,8 +26,9 @@ const FacultyQuizzes = () => {
   });
   const [qForm, setQForm] = useState({
     question_text: "", correct_answer: "", explanation: "", marks: 1,
-    options: ["", "", "", ""],
+    question_type: "mcq", options: ["", "", "", ""],
   });
+  const [gradingQuizId, setGradingQuizId] = useState("");
 
   const { data: subjects } = useQuery({
     queryKey: ["all-subjects"],
