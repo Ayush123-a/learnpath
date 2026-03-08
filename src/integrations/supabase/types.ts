@@ -476,6 +476,48 @@ export type Database = {
           },
         ]
       }
+      faculty_subjects: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          college_id: string
+          faculty_user_id: string
+          id: string
+          subject_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          college_id: string
+          faculty_user_id: string
+          id?: string
+          subject_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          college_id?: string
+          faculty_user_id?: string
+          id?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faculty_subjects_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faculty_subjects_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lectures: {
         Row: {
           created_at: string
