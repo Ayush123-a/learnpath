@@ -2,12 +2,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Bell, Building2 } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Bell, Building2, FileQuestion, Video } from "lucide-react";
 import logo from "@/assets/logo.png";
 import CollegeAdminAnalytics from "@/components/college-admin/CollegeAdminAnalytics";
 import CollegeAdminUsers from "@/components/college-admin/CollegeAdminUsers";
 import CollegeAdminDegrees from "@/components/college-admin/CollegeAdminDegrees";
 import CollegeAdminBooks from "@/components/college-admin/CollegeAdminBooks";
+import CollegeAdminQuizzes from "@/components/college-admin/CollegeAdminQuizzes";
+import CollegeAdminSessions from "@/components/college-admin/CollegeAdminSessions";
 import CollegeAdminNotifications from "@/components/college-admin/CollegeAdminNotifications";
 
 const CollegeAdminDashboard = () => {
@@ -48,12 +50,16 @@ const CollegeAdminDashboard = () => {
             <TabsTrigger value="users" className="gap-2 flex-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
             <TabsTrigger value="degrees" className="gap-2 flex-1"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
+            <TabsTrigger value="quizzes" className="gap-2 flex-1"><FileQuestion className="h-4 w-4" /> Quizzes</TabsTrigger>
+            <TabsTrigger value="sessions" className="gap-2 flex-1"><Video className="h-4 w-4" /> Sessions</TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><CollegeAdminAnalytics /></TabsContent>
           <TabsContent value="users"><CollegeAdminUsers /></TabsContent>
           <TabsContent value="degrees"><CollegeAdminDegrees /></TabsContent>
           <TabsContent value="books"><CollegeAdminBooks /></TabsContent>
+          <TabsContent value="quizzes"><CollegeAdminQuizzes /></TabsContent>
+          <TabsContent value="sessions"><CollegeAdminSessions /></TabsContent>
           <TabsContent value="notifications"><CollegeAdminNotifications /></TabsContent>
         </Tabs>
       </main>
