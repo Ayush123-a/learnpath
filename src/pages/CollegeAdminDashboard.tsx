@@ -53,6 +53,7 @@ const CollegeAdminDashboard = () => {
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
             <TabsTrigger value="quizzes" className="gap-2 flex-1"><FileQuestion className="h-4 w-4" /> Quizzes</TabsTrigger>
             <TabsTrigger value="sessions" className="gap-2 flex-1"><Video className="h-4 w-4" /> Sessions</TabsTrigger>
+            <TabsTrigger value="faculty" className="gap-2 flex-1"><UserCheck className="h-4 w-4" /> Faculty</TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><CollegeAdminAnalytics /></TabsContent>
@@ -61,6 +62,7 @@ const CollegeAdminDashboard = () => {
           <TabsContent value="books"><CollegeAdminBooks /></TabsContent>
           <TabsContent value="quizzes"><CollegeAdminQuizzes /></TabsContent>
           <TabsContent value="sessions"><CollegeAdminSessions /></TabsContent>
+          <TabsContent value="faculty"><CollegeAdminFaculty /></TabsContent>
           <TabsContent value="notifications"><CollegeAdminNotifications /></TabsContent>
         </Tabs>
       </main>
