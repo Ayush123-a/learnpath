@@ -74,6 +74,12 @@ const Index = () => {
                 Explore Courses
               </Link>
             </Button>
+            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
+              <Link to="/register-college">
+                <Building2 className="h-4 w-4 text-primary" />
+                Register Your College
+              </Link>
+            </Button>
           </div>
 
           {/* Degree Pills */}
