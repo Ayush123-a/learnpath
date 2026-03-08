@@ -1330,7 +1330,13 @@ export type Database = {
       is_student: { Args: never; Returns: boolean }
     }
     Enums: {
-      app_role: "student" | "faculty" | "admin" | "parent" | "content_creator"
+      app_role:
+        | "student"
+        | "faculty"
+        | "admin"
+        | "parent"
+        | "content_creator"
+        | "college_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1458,7 +1464,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "faculty", "admin", "parent", "content_creator"],
+      app_role: [
+        "student",
+        "faculty",
+        "admin",
+        "parent",
+        "content_creator",
+        "college_admin",
+      ],
     },
   },
 } as const
