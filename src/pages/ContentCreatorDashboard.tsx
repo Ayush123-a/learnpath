@@ -18,6 +18,7 @@ import {
   Eye, EyeOff, Trash2, Loader2, Image as ImageIcon,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import DocumentScanner from "@/components/DocumentScanner";
 
 const BOOK_TYPES = [
   { value: "textbook", label: "Main Textbook" },
@@ -326,6 +327,15 @@ const ContentCreatorDashboard = () => {
                       </label>
                     </div>
                   </div>
+                </div>
+
+                {/* Document Scanner */}
+                <div className="space-y-2">
+                  <Label>Or Scan Physical Pages</Label>
+                  <DocumentScanner onPdfReady={(file) => { setBookFile(file); toast({ title: "Scanned PDF ready", description: `${file.name} is set as the book file.` }); }} />
+                  {bookFile && bookFile.name.startsWith("scanned-") && (
+                    <p className="text-xs text-primary flex items-center gap-1">✓ Scanned PDF attached: {bookFile.name}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-6">
