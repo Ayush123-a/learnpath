@@ -24,6 +24,7 @@ const FacultyDashboard = lazy(() => import("./pages/FacultyDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ParentDashboard = lazy(() => import("./pages/ParentDashboard"));
 const ContentCreatorDashboard = lazy(() => import("./pages/ContentCreatorDashboard"));
+const CollegeAdminDashboard = lazy(() => import("./pages/CollegeAdminDashboard"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const AttendanceTracker = lazy(() => import("./pages/AttendanceTracker"));
 const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
