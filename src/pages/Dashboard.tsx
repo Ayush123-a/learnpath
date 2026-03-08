@@ -11,7 +11,7 @@ import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
   LogOut, GraduationCap, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell,
+  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell, Building2,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
