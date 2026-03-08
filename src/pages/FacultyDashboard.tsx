@@ -10,6 +10,7 @@ import FacultyQuizzes from "@/components/faculty/FacultyQuizzes";
 import FacultyAssignments from "@/components/faculty/FacultyAssignments";
 import FacultyPerformance from "@/components/faculty/FacultyPerformance";
 import FacultyAttendance from "@/components/faculty/FacultyAttendance";
+import FacultySessions from "@/components/faculty/FacultySessions";
 
 const FacultyDashboard = () => {
   const { user, roles, loading } = useAuth();
