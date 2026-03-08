@@ -46,6 +46,7 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
       { label: "Create Tests", icon: FileQuestion, href: "/faculty", desc: "Build quizzes & exams", color: "from-accent to-warning" },
       { label: "Grade Assignments", icon: FileText, href: "/faculty", desc: "Review submissions", color: "from-info to-success" },
       { label: "Track Performance", icon: BarChart3, href: "/faculty", desc: "View analytics", color: "from-warning to-accent" },
+      ...studentFeatures,
     ],
   },
   admin: {
