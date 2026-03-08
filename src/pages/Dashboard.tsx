@@ -73,10 +73,10 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
     icon: Palette,
     color: "bg-purple-500/10 text-purple-700",
     features: [
-      { label: "Upload Content", icon: Play, href: "/courses", desc: "Add materials" },
-      { label: "Create Courses", icon: BookOpen, href: "/courses", desc: "Build courses" },
-      { label: "Manage Materials", icon: FileText, href: "/dashboard", desc: "Coming soon" },
-      { label: "View Analytics", icon: BarChart3, href: "/dashboard", desc: "Coming soon" },
+      { label: "Creator Studio", icon: Palette, href: "/creator", desc: "Upload books & news" },
+      { label: "Upload Books", icon: BookOpen, href: "/creator", desc: "Add textbooks & notes" },
+      { label: "Create News", icon: FileText, href: "/creator", desc: "Post announcements" },
+      { label: "My Content", icon: BarChart3, href: "/creator", desc: "Track your uploads" },
     ],
   },
 };
