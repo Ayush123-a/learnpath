@@ -99,6 +99,7 @@ const FacultySessions = () => {
         duration_minutes: values.duration_minutes,
         invite_code: generateInviteCode(),
         created_by: user!.id,
+        college_id: profile?.college_id || null,
       });
       if (error) throw error;
     },
