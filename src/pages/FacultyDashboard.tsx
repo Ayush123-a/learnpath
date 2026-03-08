@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.png";
+import FacultyAssignedSubjects from "@/components/faculty/FacultyAssignedSubjects";
 import FacultyLectures from "@/components/faculty/FacultyLectures";
 import FacultyQuizzes from "@/components/faculty/FacultyQuizzes";
 import FacultyAssignments from "@/components/faculty/FacultyAssignments";
@@ -45,7 +46,9 @@ const FacultyDashboard = () => {
       </header>
 
       <main className="container py-6">
-        <Tabs defaultValue="lectures" className="space-y-6">
+        <FacultyAssignedSubjects />
+
+        <Tabs defaultValue="lectures" className="space-y-6 mt-6">
           <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
             <TabsTrigger value="lectures">Lectures</TabsTrigger>
             <TabsTrigger value="quizzes">Tests</TabsTrigger>
