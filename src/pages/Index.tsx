@@ -1,4 +1,4 @@
-import { GraduationCap, BookOpen, Users, Trophy, ArrowRight, Sparkles, Play, Shield } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Trophy, ArrowRight, Sparkles, Play, Shield, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
@@ -72,6 +72,12 @@ const Index = () => {
               <Link to="/courses">
                 <Play className="h-4 w-4 text-primary" />
                 Explore Courses
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
+              <Link to="/register-college">
+                <Building2 className="h-4 w-4 text-primary" />
+                Register Your College
               </Link>
             </Button>
           </div>

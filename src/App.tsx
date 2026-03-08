@@ -32,6 +32,7 @@ const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 const DeploymentGuide = lazy(() => import("./pages/DeploymentGuide"));
+const RegisterCollege = lazy(() => import("./pages/RegisterCollege"));
 const ProfileSettings = lazy(() => import("./pages/ProfileSettings"));
 const JoinSession = lazy(() => import("./pages/JoinSession"));
 
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/news" element={<NewsPage />} />
+                <Route path="/register-college" element={<RegisterCollege />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/subject/:subjectId" element={<SubjectDetail />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

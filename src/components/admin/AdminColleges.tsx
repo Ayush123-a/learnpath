@@ -174,6 +174,38 @@ const AdminColleges = () => {
           </CardContent>
         </Card>
       ) : (
+        <>
+          {/* Pending Approval Section */}
+          {colleges.filter((c: any) => !c.is_active).length > 0 && (
+            <Card className="border-warning/30 mb-4">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold text-warning flex items-center gap-2">
+                  <Building2 className="h-4 w-4" /> Pending Approval ({colleges.filter((c: any) => !c.is_active).length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {colleges.filter((c: any) => !c.is_active).map((college: any) => (
+                  <div key={college.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-muted/30">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{college.name}</span>
+                        <Badge variant="outline" className="text-[10px]">{college.code}</Badge>
+                      </div>
+                      {college.city && <p className="text-xs text-muted-foreground mt-0.5">{college.city}, {college.state}</p>}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" className="h-7 text-xs" onClick={() => toggleActiveMutation.mutate({ id: college.id, is_active: true })}>
+                        Approve
+                      </Button>
+                      <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={() => deleteMutation.mutate(college.id)}>
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         <div className="grid gap-3 md:gap-4 md:grid-cols-2">
           {colleges.map((college: any) => (
             <Card key={college.id} className={`overflow-hidden ${!college.is_active ? "opacity-60" : ""}`}>
@@ -223,6 +255,7 @@ const AdminColleges = () => {
             </Card>
           ))}
         </div>
+        </>
       )}
     </div>
   );
