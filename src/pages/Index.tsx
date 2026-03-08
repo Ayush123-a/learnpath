@@ -1,5 +1,6 @@
 import { GraduationCap, BookOpen, Users, Trophy, ArrowRight, Sparkles, Play, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
