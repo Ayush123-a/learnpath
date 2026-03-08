@@ -338,6 +338,7 @@ const ContentCreatorDashboard = () => {
                   )}
                 </div>
 
+                <div className="flex items-center gap-6">
                   <div className="flex items-center gap-2">
                     <Switch checked={bookForm.is_free} onCheckedChange={v => setBookForm(f => ({ ...f, is_free: v }))} />
                     <Label>Free book</Label>
