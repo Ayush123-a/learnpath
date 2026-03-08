@@ -37,6 +37,21 @@ const Auth = () => {
   const [signupName, setSignupName] = useState("");
   const [signupRole, setSignupRole] = useState<SignupRole>("student");
   const [studentId, setStudentId] = useState("");
+  const [selectedCollegeId, setSelectedCollegeId] = useState("");
+
+  // Fetch colleges for signup
+  const { data: colleges = [] } = useQuery({
+    queryKey: ["colleges-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("colleges")
+        .select("id, name, code")
+        .eq("is_active", true)
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
