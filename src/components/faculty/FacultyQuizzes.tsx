@@ -12,7 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, FileQuestion, Trash2, PlusCircle } from "lucide-react";
+import { Plus, FileQuestion, Trash2, PlusCircle, ClipboardCheck } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea as GradeTextarea } from "@/components/ui/textarea";
 
 const FacultyQuizzes = () => {
   const { user } = useAuth();
