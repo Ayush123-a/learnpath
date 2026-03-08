@@ -137,25 +137,25 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="container py-8">
-        <AdBanner slot="dashboard-top" format="horizontal" className="mb-6" />
+      <main className="px-3 md:container py-4 md:py-8">
+        <AdBanner slot="dashboard-top" format="horizontal" className="mb-4 md:mb-6" />
 
         {/* Welcome */}
-        <div className="relative rounded-2xl overflow-hidden mb-8">
+        <div className="relative rounded-xl md:rounded-2xl overflow-hidden mb-5 md:mb-8">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-info" />
           <div className="absolute inset-0 section-pattern opacity-10" />
-          <div className="relative p-8 md:p-10">
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
+          <div className="relative p-5 md:p-10">
+            <h1 className="font-display text-xl md:text-4xl font-bold text-primary-foreground leading-tight">
               Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}! 👋
             </h1>
-            <p className="mt-2 text-primary-foreground/70 max-w-lg">
-              Continue your learning journey. Pick up where you left off.
+            <p className="mt-1.5 md:mt-2 text-sm md:text-base text-primary-foreground/70 max-w-lg">
+              Continue your learning journey.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5 md:gap-2">
               {roles.map((role) => {
                 const rc = roleConfig[role];
                 return (
-                  <Badge key={role} className="bg-primary-foreground/20 text-primary-foreground border-0 gap-1.5 backdrop-blur-sm">
+                  <Badge key={role} className="bg-primary-foreground/20 text-primary-foreground border-0 gap-1 md:gap-1.5 backdrop-blur-sm text-xs">
                     <rc.icon className="h-3 w-3" /> {rc.label}
                   </Badge>
                 );
@@ -169,31 +169,31 @@ const Dashboard = () => {
           const rc = roleConfig[role];
           const RoleIcon = rc.icon;
           return (
-            <div key={role} className="mb-10">
-              <div className="flex items-center gap-3 mb-5">
-                <div className={`rounded-xl bg-gradient-to-br ${rc.gradient} p-2.5`}>
-                  <RoleIcon className="h-5 w-5 text-primary-foreground" />
+            <div key={role} className="mb-6 md:mb-10">
+              <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-5">
+                <div className={`rounded-lg md:rounded-xl bg-gradient-to-br ${rc.gradient} p-2 md:p-2.5`}>
+                  <RoleIcon className="h-4 w-4 md:h-5 md:w-5 text-primary-foreground" />
                 </div>
-                <h2 className="font-display text-2xl font-bold text-foreground">{rc.label} Tools</h2>
+                <h2 className="font-display text-lg md:text-2xl font-bold text-foreground">{rc.label} Tools</h2>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 md:gap-4">
                 {rc.features.map((feature, idx) => (
                   <Link key={feature.label} to={feature.href}>
                     <div
                       className="glass-card group overflow-hidden h-full"
-                      style={{ animationDelay: `${idx * 60}ms` }}
+                      style={{ animationDelay: `${idx * 40}ms` }}
                     >
-                      <div className={`h-1 bg-gradient-to-r ${feature.color}`} />
-                      <div className="p-5 flex items-center gap-4">
-                        <div className={`rounded-xl bg-gradient-to-br ${feature.color} p-3 shadow-sm flex-shrink-0`}>
-                          <feature.icon className="h-5 w-5 text-primary-foreground" />
+                      <div className={`h-0.5 md:h-1 bg-gradient-to-r ${feature.color}`} />
+                      <div className="p-3 md:p-5 flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+                        <div className={`rounded-lg md:rounded-xl bg-gradient-to-br ${feature.color} p-2 md:p-3 shadow-sm flex-shrink-0`}>
+                          <feature.icon className="h-4 w-4 md:h-5 md:w-5 text-primary-foreground" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{feature.label}</h3>
-                          <p className="text-sm text-muted-foreground truncate">{feature.desc}</p>
+                          <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors leading-tight">{feature.label}</h3>
+                          <p className="text-[10px] md:text-sm text-muted-foreground truncate mt-0.5">{feature.desc}</p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                        <ChevronRight className="hidden md:block h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                       </div>
                     </div>
                   </Link>
@@ -204,7 +204,7 @@ const Dashboard = () => {
         })}
 
         {/* News Feed */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <NewsFeed />
         </div>
       </main>
