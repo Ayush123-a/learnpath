@@ -10,6 +10,7 @@ import AdminBooks from "@/components/admin/AdminBooks";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
 import AdminNotifications from "@/components/admin/AdminNotifications";
+import AdminRoleRequests from "@/components/admin/AdminRoleRequests";
 
 const AdminDashboard = () => {
   const { user, roles, loading } = useAuth();
