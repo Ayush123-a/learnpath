@@ -1460,6 +1460,7 @@ export type Database = {
       is_parent: { Args: never; Returns: boolean }
       is_student: { Args: never; Returns: boolean }
       same_college: { Args: { _user_id: string }; Returns: boolean }
+      user_college_id: { Args: never; Returns: string }
     }
     Enums: {
       app_role:
