@@ -11,7 +11,7 @@ import {
   BookOpen, Users, Shield, Heart, Palette, CreditCard,
   LogOut, GraduationCap, Play, FileText,
   Calculator, Sparkles, FileQuestion, BarChart3,
-  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell,
+  CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell, Building2,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -89,10 +89,21 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof BookOpen; color:
       { label: "My Content", icon: BarChart3, href: "/creator", desc: "Track your uploads", color: "from-success to-primary" },
     ],
   },
+  college_admin: {
+    label: "College Admin",
+    icon: Building2,
+    color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+    gradient: "from-indigo-500 to-primary",
+    features: [
+      { label: "Admin Panel", icon: Shield, href: "/admin", desc: "Manage your college", color: "from-indigo-500 to-primary" },
+      { label: "Manage Users", icon: Users, href: "/admin", desc: "College users & roles", color: "from-primary to-info" },
+      { label: "Manage Degrees", icon: GraduationCap, href: "/admin", desc: "Course structure", color: "from-success to-primary" },
+    ],
+  },
 };
 
 const Dashboard = () => {
-  const { user, roles, loading, signOut } = useAuth();
+  const { user, roles, collegeName, loading, signOut } = useAuth();
 
   if (loading) {
     return (
@@ -148,7 +159,7 @@ const Dashboard = () => {
               Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}! 👋
             </h1>
             <p className="mt-1.5 md:mt-2 text-sm md:text-base text-primary-foreground/70 max-w-lg">
-              Continue your learning journey.
+              {collegeName ? `${collegeName} · ` : ""}Continue your learning journey.
             </p>
             <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5 md:gap-2">
               {roles.map((role) => {

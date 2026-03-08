@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck, Building2 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminDegrees from "@/components/admin/AdminDegrees";
@@ -11,6 +11,7 @@ import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminRoleRequests from "@/components/admin/AdminRoleRequests";
+import AdminColleges from "@/components/admin/AdminColleges";
 
 const AdminDashboard = () => {
   const { user, roles, loading } = useAuth();
@@ -47,6 +48,7 @@ const AdminDashboard = () => {
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="flex w-full overflow-x-auto">
             <TabsTrigger value="analytics" className="gap-2 flex-1"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
+            <TabsTrigger value="colleges" className="gap-2 flex-1"><Building2 className="h-4 w-4" /> Colleges</TabsTrigger>
             <TabsTrigger value="users" className="gap-2 flex-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
             <TabsTrigger value="degrees" className="gap-2 flex-1"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
@@ -55,6 +57,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="role-requests" className="gap-2 flex-1"><ShieldCheck className="h-4 w-4" /> Approvals</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
+          <TabsContent value="colleges"><AdminColleges /></TabsContent>
           <TabsContent value="users"><AdminUsers /></TabsContent>
           <TabsContent value="degrees"><AdminDegrees /></TabsContent>
           <TabsContent value="books"><AdminBooks /></TabsContent>

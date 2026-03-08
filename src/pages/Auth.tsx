@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { GraduationCap, Mail, Lock, User, ArrowLeft, IdCard, ShieldCheck } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, ArrowLeft, IdCard, ShieldCheck, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
@@ -36,6 +37,21 @@ const Auth = () => {
   const [signupName, setSignupName] = useState("");
   const [signupRole, setSignupRole] = useState<SignupRole>("student");
   const [studentId, setStudentId] = useState("");
+  const [selectedCollegeId, setSelectedCollegeId] = useState("");
+
+  // Fetch colleges for signup
+  const { data: colleges = [] } = useQuery({
+    queryKey: ["colleges-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("colleges")
+        .select("id, name, code")
+        .eq("is_active", true)
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +75,10 @@ const Auth = () => {
       toast.error("Please enter your Student ID");
       return;
     }
+    if (!selectedCollegeId && colleges.length > 0) {
+      toast.error("Please select your college");
+      return;
+    }
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
@@ -76,14 +96,19 @@ const Auth = () => {
       return;
     }
 
-    // If student, update student_id in profile
-    if (signupRole === "student" && data.user) {
-      // Profile is auto-created by trigger, update student_id after a short delay
+    // Update profile with college_id and student_id
+    if (data.user) {
       setTimeout(async () => {
-        await supabase
-          .from("profiles")
-          .update({ student_id: studentId.trim().toUpperCase() })
-          .eq("user_id", data.user!.id);
+        const updates: any = {};
+        if (selectedCollegeId) updates.college_id = selectedCollegeId;
+        if (signupRole === "student" && studentId.trim()) updates.student_id = studentId.trim().toUpperCase();
+        
+        if (Object.keys(updates).length > 0) {
+          await supabase
+            .from("profiles")
+            .update(updates)
+            .eq("user_id", data.user!.id);
+        }
       }, 1000);
     }
 
@@ -192,6 +217,26 @@ const Auth = () => {
                       </p>
                     )}
                   </div>
+
+                  {colleges.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>College</Label>
+                      <Select value={selectedCollegeId} onValueChange={setSelectedCollegeId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your college" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colleges.map((c: any) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              <span className="flex items-center gap-2">
+                                <Building2 className="h-3 w-3" /> {c.name} ({c.code})
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
