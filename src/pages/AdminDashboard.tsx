@@ -48,6 +48,7 @@ const AdminDashboard = () => {
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="flex w-full overflow-x-auto">
             <TabsTrigger value="analytics" className="gap-2 flex-1"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
+            <TabsTrigger value="colleges" className="gap-2 flex-1"><Building2 className="h-4 w-4" /> Colleges</TabsTrigger>
             <TabsTrigger value="users" className="gap-2 flex-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
             <TabsTrigger value="degrees" className="gap-2 flex-1"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
@@ -56,6 +57,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="role-requests" className="gap-2 flex-1"><ShieldCheck className="h-4 w-4" /> Approvals</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
+          <TabsContent value="colleges"><AdminColleges /></TabsContent>
           <TabsContent value="users"><AdminUsers /></TabsContent>
           <TabsContent value="degrees"><AdminDegrees /></TabsContent>
           <TabsContent value="books"><AdminBooks /></TabsContent>
