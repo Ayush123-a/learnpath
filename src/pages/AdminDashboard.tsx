@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Shield, CreditCard, Bell, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo.png";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminDegrees from "@/components/admin/AdminDegrees";
@@ -10,6 +10,7 @@ import AdminBooks from "@/components/admin/AdminBooks";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
 import AdminNotifications from "@/components/admin/AdminNotifications";
+import AdminRoleRequests from "@/components/admin/AdminRoleRequests";
 
 const AdminDashboard = () => {
   const { user, roles, loading } = useAuth();
@@ -51,6 +52,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="books" className="gap-2 flex-1"><BookOpen className="h-4 w-4" /> Books</TabsTrigger>
             <TabsTrigger value="subscriptions" className="gap-2 flex-1"><CreditCard className="h-4 w-4" /> Subs</TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
+            <TabsTrigger value="role-requests" className="gap-2 flex-1"><ShieldCheck className="h-4 w-4" /> Approvals</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
           <TabsContent value="users"><AdminUsers /></TabsContent>
@@ -58,6 +60,7 @@ const AdminDashboard = () => {
           <TabsContent value="books"><AdminBooks /></TabsContent>
           <TabsContent value="subscriptions"><AdminSubscriptions /></TabsContent>
           <TabsContent value="notifications"><AdminNotifications /></TabsContent>
+          <TabsContent value="role-requests"><AdminRoleRequests /></TabsContent>
         </Tabs>
       </main>
     </div>

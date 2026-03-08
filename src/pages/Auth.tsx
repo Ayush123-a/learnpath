@@ -6,10 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { GraduationCap, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, ArrowLeft, IdCard, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
+
+type SignupRole = "student" | "faculty" | "parent" | "admin";
+
+const roleLabels: Record<SignupRole, string> = {
+  student: "Student",
+  faculty: "Faculty / Teacher",
+  parent: "Parent",
+  admin: "Admin",
+};
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -24,6 +34,8 @@ const Auth = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupName, setSignupName] = useState("");
+  const [signupRole, setSignupRole] = useState<SignupRole>("student");
+  const [studentId, setStudentId] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +55,13 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (signupRole === "student" && !studentId.trim()) {
+      toast.error("Please enter your Student ID");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+
+    const { data, error } = await supabase.auth.signUp({
       email: signupEmail,
       password: signupPassword,
       options: {
@@ -52,13 +69,41 @@ const Auth = () => {
         emailRedirectTo: window.location.origin,
       },
     });
-    setLoading(false);
+    
     if (error) {
+      setLoading(false);
       toast.error(error.message);
-    } else {
-      toast.success("Check your email to confirm your account!");
-      setTab("login");
+      return;
     }
+
+    // If student, update student_id in profile
+    if (signupRole === "student" && data.user) {
+      // Profile is auto-created by trigger, update student_id after a short delay
+      setTimeout(async () => {
+        await supabase
+          .from("profiles")
+          .update({ student_id: studentId.trim().toUpperCase() })
+          .eq("user_id", data.user!.id);
+      }, 1000);
+    }
+
+    // If non-student role, create a role request
+    if (signupRole !== "student" && data.user) {
+      setTimeout(async () => {
+        await supabase.from("role_requests").insert({
+          user_id: data.user!.id,
+          requested_role: signupRole,
+        });
+      }, 1000);
+    }
+
+    setLoading(false);
+    if (signupRole === "student") {
+      toast.success("Check your email to confirm your account!");
+    } else {
+      toast.success("Account created! Your role request is pending admin approval. You can log in as a student for now.");
+    }
+    setTab("login");
   };
 
   return (
@@ -130,6 +175,25 @@ const Auth = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
+                    <Label>I am a</Label>
+                    <Select value={signupRole} onValueChange={(v) => setSignupRole(v as SignupRole)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(Object.keys(roleLabels) as SignupRole[]).map((r) => (
+                          <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {signupRole !== "student" && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" /> {roleLabels[signupRole]} access requires admin approval
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -144,6 +208,25 @@ const Auth = () => {
                       />
                     </div>
                   </div>
+
+                  {signupRole === "student" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-student-id">Student ID</Label>
+                      <div className="relative">
+                        <IdCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="signup-student-id"
+                          type="text"
+                          placeholder="e.g. BCA2024001"
+                          className="pl-10 uppercase"
+                          value={studentId}
+                          onChange={(e) => setStudentId(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <div className="relative">

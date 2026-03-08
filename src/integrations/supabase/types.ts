@@ -518,6 +518,7 @@ export type Database = {
           full_name: string
           id: string
           phone: string | null
+          student_id: string | null
           updated_at: string
           user_id: string
         }
@@ -528,6 +529,7 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          student_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -538,6 +540,7 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          student_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -762,6 +765,36 @@ export type Database = {
           reward_type?: string | null
           reward_value?: number | null
           status?: string
+        }
+        Relationships: []
+      }
+      role_requests: {
+        Row: {
+          created_at: string
+          id: string
+          requested_role: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          requested_role: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          requested_role?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
