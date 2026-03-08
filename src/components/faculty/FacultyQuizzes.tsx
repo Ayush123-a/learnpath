@@ -87,10 +87,11 @@ const FacultyQuizzes = () => {
       const { error } = await supabase.from("questions").insert({
         quiz_id: selectedQuizId,
         question_text: qForm.question_text,
+        question_type: qForm.question_type,
         correct_answer: qForm.correct_answer,
         explanation: qForm.explanation || null,
         marks: qForm.marks,
-        options: qForm.options.filter(Boolean),
+        options: qForm.question_type === "mcq" ? qForm.options.filter(Boolean) : [],
         sort_order: count + 1,
       });
       if (error) throw error;
@@ -98,7 +99,7 @@ const FacultyQuizzes = () => {
     onSuccess: () => {
       toast.success("Question added!");
       queryClient.invalidateQueries({ queryKey: ["quiz-questions", selectedQuizId] });
-      setQForm({ question_text: "", correct_answer: "", explanation: "", marks: 1, options: ["", "", "", ""] });
+      setQForm({ question_text: "", correct_answer: "", explanation: "", marks: 1, question_type: "mcq", options: ["", "", "", ""] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
