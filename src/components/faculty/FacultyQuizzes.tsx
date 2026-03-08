@@ -51,15 +51,31 @@ const FacultyQuizzes = () => {
     },
   });
 
-  const { data: questions } = useQuery({
-    queryKey: ["quiz-questions", selectedQuizId],
-    enabled: !!selectedQuizId,
+  // Fetch attempts for grading
+  const { data: attempts } = useQuery({
+    queryKey: ["quiz-attempts-grading", gradingQuizId],
+    enabled: !!gradingQuizId,
     queryFn: async () => {
-      const { data } = await supabase.from("questions").select("*").eq("quiz_id", selectedQuizId).order("sort_order");
+      const { data } = await supabase
+        .from("quiz_attempts")
+        .select("*")
+        .eq("quiz_id", gradingQuizId)
+        .eq("is_completed", true)
+        .order("completed_at", { ascending: false });
       return data || [];
     },
   });
 
+  // Fetch profiles for display names
+  const { data: profiles } = useQuery({
+    queryKey: ["profiles-for-grading", gradingQuizId],
+    enabled: !!gradingQuizId && !!attempts?.length,
+    queryFn: async () => {
+      const userIds = [...new Set(attempts!.map(a => a.user_id))];
+      const { data } = await supabase.from("profiles").select("user_id, full_name, email").in("user_id", userIds);
+      return data || [];
+    },
+  });
   const createQuiz = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("quizzes").insert({
