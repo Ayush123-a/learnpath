@@ -201,13 +201,23 @@ const FacultyQuizzes = () => {
                           ))}
                           <hr />
                           <h4 className="font-semibold text-sm">Add Question</h4>
+                          <div><Label>Question Type</Label>
+                            <Select value={qForm.question_type} onValueChange={(v) => setQForm({ ...qForm, question_type: v })}>
+                              <SelectTrigger><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="mcq">MCQ</SelectItem>
+                                <SelectItem value="numerical">Numerical</SelectItem>
+                                <SelectItem value="theory">Theory</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                           <div><Label>Question</Label><Textarea value={qForm.question_text} onChange={(e) => setQForm({ ...qForm, question_text: e.target.value })} /></div>
-                          {qForm.options.map((opt, i) => (
+                          {qForm.question_type === "mcq" && qForm.options.map((opt, i) => (
                             <div key={i}><Label>Option {String.fromCharCode(65 + i)}</Label>
                               <Input value={opt} onChange={(e) => { const o = [...qForm.options]; o[i] = e.target.value; setQForm({ ...qForm, options: o }); }} />
                             </div>
                           ))}
-                          <div><Label>Correct Answer</Label><Input value={qForm.correct_answer} onChange={(e) => setQForm({ ...qForm, correct_answer: e.target.value })} placeholder="e.g. A" /></div>
+                          <div><Label>{qForm.question_type === "theory" ? "Model Answer" : "Correct Answer"}</Label><Input value={qForm.correct_answer} onChange={(e) => setQForm({ ...qForm, correct_answer: e.target.value })} placeholder={qForm.question_type === "mcq" ? "e.g. Option A text" : qForm.question_type === "numerical" ? "e.g. 42" : "Model answer for reference"} /></div>
                           <div><Label>Explanation</Label><Textarea value={qForm.explanation} onChange={(e) => setQForm({ ...qForm, explanation: e.target.value })} /></div>
                           <div><Label>Marks</Label><Input type="number" value={qForm.marks} onChange={(e) => setQForm({ ...qForm, marks: +e.target.value })} /></div>
                           <Button onClick={() => addQuestion.mutate()} disabled={!qForm.question_text || !qForm.correct_answer || addQuestion.isPending} className="w-full">
