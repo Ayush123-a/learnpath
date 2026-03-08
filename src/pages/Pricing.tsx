@@ -120,8 +120,17 @@ const Pricing = () => {
                 </CardHeader>
                 <CardContent className="flex-1">
                   <div className="text-center mb-6">
-                    <span className="text-4xl font-bold">₹{plan.price_monthly}</span>
-                    <span className="text-muted-foreground">/mo</span>
+                    {plan.slug === "lifetime" ? (
+                      <>
+                        <span className="text-4xl font-bold">₹{plan.price_total}</span>
+                        <span className="text-muted-foreground"> one-time</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold">₹{plan.price_monthly}</span>
+                        <span className="text-muted-foreground">/mo</span>
+                      </>
+                    )}
                     {plan.slug === "yearly" && (
                       <p className="text-sm text-muted-foreground mt-1">₹{plan.price_total} billed yearly</p>
                     )}
