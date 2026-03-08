@@ -114,7 +114,8 @@ const Pricing = () => {
                   <CardTitle className="font-display text-xl">{plan.name}</CardTitle>
                   <CardDescription>
                     {plan.slug === "free" ? "Get started for free" :
-                      plan.slug === "monthly" ? "Flexible monthly billing" : "Best value for serious learners"}
+                      plan.slug === "monthly" ? "Flexible monthly billing" :
+                      plan.slug === "lifetime" ? "One-time payment, forever access" : "Best value for serious learners"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1">
