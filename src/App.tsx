@@ -29,6 +29,7 @@ const AttendanceTracker = lazy(() => import("./pages/AttendanceTracker"));
 const StudyPlanner = lazy(() => import("./pages/StudyPlanner"));
 const TimetableBuilder = lazy(() => import("./pages/TimetableBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
 
 const queryClient = new QueryClient();
 
