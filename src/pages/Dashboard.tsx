@@ -1,6 +1,7 @@
 import { useAuth, AppRole } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import AdBanner from "@/components/ads/AdBanner";
+import NewsFeed from "@/components/NewsFeed";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -168,6 +169,11 @@ const Dashboard = () => {
             </div>
           );
         })}
+
+        {/* News Feed Section */}
+        <div className="mb-8">
+          <NewsFeed />
+        </div>
       </main>
     </div>
   );
