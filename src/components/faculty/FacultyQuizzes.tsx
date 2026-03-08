@@ -122,10 +122,14 @@ const FacultyQuizzes = () => {
         sort_order: count + 1,
       });
       if (error) throw error;
+      // Update quiz total_marks
+      const newTotal = (questions || []).reduce((s, q: any) => s + (q.marks || 0), 0) + qForm.marks;
+      await supabase.from("quizzes").update({ total_marks: newTotal }).eq("id", selectedQuizId);
     },
     onSuccess: () => {
       toast.success("Question added!");
       queryClient.invalidateQueries({ queryKey: ["quiz-questions", selectedQuizId] });
+      queryClient.invalidateQueries({ queryKey: ["faculty-quizzes"] });
       setQForm({ question_text: "", correct_answer: "", explanation: "", marks: 1, question_type: "mcq", options: ["", "", "", ""] });
     },
     onError: (e: Error) => toast.error(e.message),
