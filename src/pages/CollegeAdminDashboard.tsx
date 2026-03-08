@@ -2,12 +2,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Bell, Building2 } from "lucide-react";
+import { ArrowLeft, Users, GraduationCap, BookOpen, BarChart3, Bell, Building2, FileQuestion, Video } from "lucide-react";
 import logo from "@/assets/logo.png";
 import CollegeAdminAnalytics from "@/components/college-admin/CollegeAdminAnalytics";
 import CollegeAdminUsers from "@/components/college-admin/CollegeAdminUsers";
 import CollegeAdminDegrees from "@/components/college-admin/CollegeAdminDegrees";
 import CollegeAdminBooks from "@/components/college-admin/CollegeAdminBooks";
+import CollegeAdminQuizzes from "@/components/college-admin/CollegeAdminQuizzes";
+import CollegeAdminSessions from "@/components/college-admin/CollegeAdminSessions";
 import CollegeAdminNotifications from "@/components/college-admin/CollegeAdminNotifications";
 
 const CollegeAdminDashboard = () => {
