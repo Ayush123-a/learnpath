@@ -40,6 +40,21 @@ const FacultySessions = () => {
     duration_minutes: 60,
   });
 
+  // Get faculty's college_id
+  const { data: profile } = useQuery({
+    queryKey: ["faculty-profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("college_id")
+        .eq("user_id", user!.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ["faculty-sessions"],
     queryFn: async () => {
