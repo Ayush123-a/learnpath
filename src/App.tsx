@@ -32,6 +32,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 const DeploymentGuide = lazy(() => import("./pages/DeploymentGuide"));
 const ProfileSettings = lazy(() => import("./pages/ProfileSettings"));
+const JoinSession = lazy(() => import("./pages/JoinSession"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,6 +86,7 @@ const App = () => (
                 <Route path="/creator" element={<ProtectedRoute requiredRole="content_creator"><ContentCreatorDashboard /></ProtectedRoute>} />
                 <Route path="/deployment-guide" element={<ProtectedRoute requiredRole="admin"><DeploymentGuide /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+                <Route path="/sessions" element={<ProtectedRoute><JoinSession /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

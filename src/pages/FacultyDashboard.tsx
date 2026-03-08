@@ -10,6 +10,7 @@ import FacultyQuizzes from "@/components/faculty/FacultyQuizzes";
 import FacultyAssignments from "@/components/faculty/FacultyAssignments";
 import FacultyPerformance from "@/components/faculty/FacultyPerformance";
 import FacultyAttendance from "@/components/faculty/FacultyAttendance";
+import FacultySessions from "@/components/faculty/FacultySessions";
 
 const FacultyDashboard = () => {
   const { user, roles, loading } = useAuth();
@@ -45,10 +46,11 @@ const FacultyDashboard = () => {
 
       <main className="container py-6">
         <Tabs defaultValue="lectures" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
             <TabsTrigger value="lectures">Lectures</TabsTrigger>
             <TabsTrigger value="quizzes">Tests</TabsTrigger>
             <TabsTrigger value="assignments">Assignments</TabsTrigger>
+            <TabsTrigger value="sessions">Sessions</TabsTrigger>
             <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
@@ -61,6 +63,9 @@ const FacultyDashboard = () => {
           </TabsContent>
           <TabsContent value="assignments">
             <FacultyAssignments />
+          </TabsContent>
+          <TabsContent value="sessions">
+            <FacultySessions />
           </TabsContent>
           <TabsContent value="attendance">
             <FacultyAttendance />
