@@ -169,6 +169,11 @@ const Dashboard = () => {
             </div>
           );
         })}
+
+        {/* News Feed Section */}
+        <div className="mb-8">
+          <NewsFeed />
+        </div>
       </main>
     </div>
   );
