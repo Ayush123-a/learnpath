@@ -85,6 +85,7 @@ const App = () => (
                 <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/parent" element={<ProtectedRoute requiredRole="parent"><ParentDashboard /></ProtectedRoute>} />
                 <Route path="/creator" element={<ProtectedRoute requiredRole="content_creator"><ContentCreatorDashboard /></ProtectedRoute>} />
+                <Route path="/college-admin" element={<ProtectedRoute requiredRole="college_admin"><CollegeAdminDashboard /></ProtectedRoute>} />
                 <Route path="/deployment-guide" element={<ProtectedRoute requiredRole="admin"><DeploymentGuide /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
                 <Route path="/sessions" element={<ProtectedRoute><JoinSession /></ProtectedRoute>} />
