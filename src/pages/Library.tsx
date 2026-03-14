@@ -186,7 +186,7 @@ const Library = () => {
                     <Link key={book.id} to={`/library/read/${book.id}`}>
                       <Card className="group hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full">
                         <CardContent className="p-5 space-y-3">
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-2.5 sm:gap-3">
                             <div className={`rounded-lg p-2.5 shrink-0 ${cfg.color}`}>
                               <TypeIcon className="h-5 w-5" />
                             </div>
