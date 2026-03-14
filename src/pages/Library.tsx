@@ -166,9 +166,9 @@ const Library = () => {
 
           <TabsContent value={activeTab} className="mt-4">
             {loading ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Skeleton key={i} className="h-48 rounded-lg" />
+                  <Skeleton key={i} className="h-40 sm:h-48 rounded-lg" />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
