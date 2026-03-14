@@ -112,17 +112,17 @@ const Library = () => {
         </div>
       </header>
 
-      <main className="container py-6 space-y-6">
+      <main className="container px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search books, authors, tags..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder="Search books, authors, tags..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 sm:h-10 text-sm" />
         </div>
 
         {/* Degree & Semester filters */}
-        <div className="flex gap-3 flex-wrap">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
           <Select value={selectedDegree} onValueChange={(v) => { setSelectedDegree(v); setSelectedSemester("all"); }}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-full sm:w-[160px] h-9 sm:h-10 text-xs sm:text-sm">
               <SelectValue placeholder="All Degrees" />
             </SelectTrigger>
             <SelectContent>
@@ -134,7 +134,7 @@ const Library = () => {
           </Select>
 
           <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] h-9 sm:h-10 text-xs sm:text-sm">
               <SelectValue placeholder="All Semesters" />
             </SelectTrigger>
             <SelectContent>
