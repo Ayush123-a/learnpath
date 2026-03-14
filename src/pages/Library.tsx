@@ -102,13 +102,13 @@ const Library = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center gap-3">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="container flex h-12 sm:h-14 items-center gap-2 sm:gap-3 px-3 sm:px-6">
+          <Link to="/" className="flex items-center gap-1.5">
             <ArrowLeft className="h-4 w-4" />
-            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
+            <img src={logo} alt="Learn Path" className="h-6 w-6 sm:h-7 sm:w-7 rounded" />
           </Link>
-          <h1 className="font-display text-lg font-bold">Digital Library</h1>
-          <span className="ml-auto text-xs text-muted-foreground">{filtered.length} / {books.length} books</span>
+          <h1 className="font-display text-base sm:text-lg font-bold truncate">Digital Library</h1>
+          <span className="ml-auto text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{filtered.length}/{books.length}</span>
         </div>
       </header>
 
