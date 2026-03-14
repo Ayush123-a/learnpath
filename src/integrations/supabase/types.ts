@@ -688,6 +688,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approval_status: string
           avatar_url: string | null
           college_id: string | null
           created_at: string
@@ -700,6 +701,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          approval_status?: string
           avatar_url?: string | null
           college_id?: string | null
           created_at?: string
@@ -712,6 +714,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          approval_status?: string
           avatar_url?: string | null
           college_id?: string | null
           created_at?: string
