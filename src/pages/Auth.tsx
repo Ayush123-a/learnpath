@@ -123,11 +123,10 @@ const Auth = () => {
     }
 
     setLoading(false);
-    if (signupRole === "student") {
-      toast.success("Check your email to confirm your account!");
-    } else {
-      toast.success("Account created! Your role request is pending admin approval. You can log in as a student for now.");
-    }
+    toast.success(
+      "Account created! Your account is pending college admin approval. You'll be notified once approved.",
+      { duration: 6000 }
+    );
     setTab("login");
   };
 

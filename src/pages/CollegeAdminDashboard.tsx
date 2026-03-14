@@ -46,8 +46,9 @@ const CollegeAdminDashboard = () => {
       </header>
 
       <main className="container py-6">
-        <Tabs defaultValue="analytics" className="space-y-6">
+        <Tabs defaultValue="approvals" className="space-y-6">
           <TabsList className="flex w-full overflow-x-auto">
+            <TabsTrigger value="approvals" className="gap-2 flex-1"><ShieldCheck className="h-4 w-4" /> Approvals</TabsTrigger>
             <TabsTrigger value="analytics" className="gap-2 flex-1"><BarChart3 className="h-4 w-4" /> Overview</TabsTrigger>
             <TabsTrigger value="users" className="gap-2 flex-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
             <TabsTrigger value="degrees" className="gap-2 flex-1"><GraduationCap className="h-4 w-4" /> Degrees</TabsTrigger>
@@ -57,6 +58,7 @@ const CollegeAdminDashboard = () => {
             <TabsTrigger value="faculty" className="gap-2 flex-1"><UserCheck className="h-4 w-4" /> Faculty</TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2 flex-1"><Bell className="h-4 w-4" /> Notify</TabsTrigger>
           </TabsList>
+          <TabsContent value="approvals"><CollegeAdminApprovals /></TabsContent>
           <TabsContent value="analytics"><CollegeAdminAnalytics /></TabsContent>
           <TabsContent value="users"><CollegeAdminUsers /></TabsContent>
           <TabsContent value="degrees"><CollegeAdminDegrees /></TabsContent>
