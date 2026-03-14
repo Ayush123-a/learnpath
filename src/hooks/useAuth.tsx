@@ -10,6 +10,7 @@ interface AuthContextType {
   roles: AppRole[];
   collegeId: string | null;
   collegeName: string | null;
+  approvalStatus: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
