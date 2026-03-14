@@ -102,27 +102,27 @@ const Library = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center gap-3">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="container flex h-12 sm:h-14 items-center gap-2 sm:gap-3 px-3 sm:px-6">
+          <Link to="/" className="flex items-center gap-1.5">
             <ArrowLeft className="h-4 w-4" />
-            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
+            <img src={logo} alt="Learn Path" className="h-6 w-6 sm:h-7 sm:w-7 rounded" />
           </Link>
-          <h1 className="font-display text-lg font-bold">Digital Library</h1>
-          <span className="ml-auto text-xs text-muted-foreground">{filtered.length} / {books.length} books</span>
+          <h1 className="font-display text-base sm:text-lg font-bold truncate">Digital Library</h1>
+          <span className="ml-auto text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{filtered.length}/{books.length}</span>
         </div>
       </header>
 
-      <main className="container py-6 space-y-6">
+      <main className="container px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search books, authors, tags..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder="Search books, authors, tags..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 sm:h-10 text-sm" />
         </div>
 
         {/* Degree & Semester filters */}
-        <div className="flex gap-3 flex-wrap">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
           <Select value={selectedDegree} onValueChange={(v) => { setSelectedDegree(v); setSelectedSemester("all"); }}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-full sm:w-[160px] h-9 sm:h-10 text-xs sm:text-sm">
               <SelectValue placeholder="All Degrees" />
             </SelectTrigger>
             <SelectContent>
@@ -134,7 +134,7 @@ const Library = () => {
           </Select>
 
           <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] h-9 sm:h-10 text-xs sm:text-sm">
               <SelectValue placeholder="All Semesters" />
             </SelectTrigger>
             <SelectContent>
@@ -148,25 +148,27 @@ const Library = () => {
 
         {/* Book type tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full flex-wrap h-auto gap-1 bg-transparent p-0">
-            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 py-1.5 text-xs">
-              All ({books.length})
-            </TabsTrigger>
-            {Object.entries(bookTypeConfig).map(([key, cfg]) => {
-              const count = books.filter(b => b.book_type === key).length;
-              return (
-                <TabsTrigger key={key} value={key} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 py-1.5 text-xs gap-1">
-                  <cfg.icon className="h-3 w-3" /> {cfg.label} {count > 0 && `(${count})`}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+          <div className="overflow-x-auto -mx-3 sm:-mx-0 px-3 sm:px-0 scrollbar-hide">
+            <TabsList className="w-max sm:w-full flex-nowrap sm:flex-wrap h-auto gap-1 bg-transparent p-0">
+              <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs shrink-0">
+                All ({books.length})
+              </TabsTrigger>
+              {Object.entries(bookTypeConfig).map(([key, cfg]) => {
+                const count = books.filter(b => b.book_type === key).length;
+                return (
+                  <TabsTrigger key={key} value={key} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs gap-1 shrink-0">
+                    <cfg.icon className="h-3 w-3" /> <span className="hidden xs:inline">{cfg.label}</span><span className="xs:hidden">{cfg.label.split(' ')[0]}</span> {count > 0 && `(${count})`}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
 
           <TabsContent value={activeTab} className="mt-4">
             {loading ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Skeleton key={i} className="h-48 rounded-lg" />
+                  <Skeleton key={i} className="h-40 sm:h-48 rounded-lg" />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
@@ -176,7 +178,7 @@ const Library = () => {
                 <p className="text-sm text-muted-foreground">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.map((book) => {
                   const cfg = bookTypeConfig[book.book_type] || bookTypeConfig.textbook;
                   const TypeIcon = cfg.icon;
@@ -184,7 +186,7 @@ const Library = () => {
                     <Link key={book.id} to={`/library/read/${book.id}`}>
                       <Card className="group hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full">
                         <CardContent className="p-5 space-y-3">
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-2.5 sm:gap-3">
                             <div className={`rounded-lg p-2.5 shrink-0 ${cfg.color}`}>
                               <TypeIcon className="h-5 w-5" />
                             </div>
