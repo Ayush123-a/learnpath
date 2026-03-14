@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [collegeId, setCollegeId] = useState<string | null>(null);
   const [collegeName, setCollegeName] = useState<string | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const rolesCache = useRef<Record<string, AppRole[]>>({});
