@@ -14,6 +14,7 @@ import {
   CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell, Building2,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import PendingApprovalBanner from "@/components/PendingApprovalBanner";
 
 const studentFeatures = [
   { label: "Video Lectures", icon: Play, href: "/courses", desc: "Browse & watch lectures", color: "from-primary to-info" },
