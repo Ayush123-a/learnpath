@@ -58,11 +58,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchCollege = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("college_id, colleges(name)")
+      .select("college_id, approval_status, colleges(name)")
       .eq("user_id", userId)
       .single();
     if (data) {
       setCollegeId(data.college_id);
+      setApprovalStatus((data as any).approval_status || null);
       setCollegeName((data as any).colleges?.name || null);
     }
   };
