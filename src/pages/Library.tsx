@@ -148,19 +148,21 @@ const Library = () => {
 
         {/* Book type tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full flex-wrap h-auto gap-1 bg-transparent p-0">
-            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 py-1.5 text-xs">
-              All ({books.length})
-            </TabsTrigger>
-            {Object.entries(bookTypeConfig).map(([key, cfg]) => {
-              const count = books.filter(b => b.book_type === key).length;
-              return (
-                <TabsTrigger key={key} value={key} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 py-1.5 text-xs gap-1">
-                  <cfg.icon className="h-3 w-3" /> {cfg.label} {count > 0 && `(${count})`}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+          <div className="overflow-x-auto -mx-3 sm:-mx-0 px-3 sm:px-0 scrollbar-hide">
+            <TabsList className="w-max sm:w-full flex-nowrap sm:flex-wrap h-auto gap-1 bg-transparent p-0">
+              <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs shrink-0">
+                All ({books.length})
+              </TabsTrigger>
+              {Object.entries(bookTypeConfig).map(([key, cfg]) => {
+                const count = books.filter(b => b.book_type === key).length;
+                return (
+                  <TabsTrigger key={key} value={key} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs gap-1 shrink-0">
+                    <cfg.icon className="h-3 w-3" /> <span className="hidden xs:inline">{cfg.label}</span><span className="xs:hidden">{cfg.label.split(' ')[0]}</span> {count > 0 && `(${count})`}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
 
           <TabsContent value={activeTab} className="mt-4">
             {loading ? (
