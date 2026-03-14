@@ -178,7 +178,7 @@ const Library = () => {
                 <p className="text-sm text-muted-foreground">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.map((book) => {
                   const cfg = bookTypeConfig[book.book_type] || bookTypeConfig.textbook;
                   const TypeIcon = cfg.icon;
