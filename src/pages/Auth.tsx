@@ -99,17 +99,44 @@ const Auth = () => {
     // Update profile with college_id and student_id
     if (data.user) {
       setTimeout(async () => {
-        const updates: any = {};
+        const updates: any = { approval_status: "pending" };
         if (selectedCollegeId) updates.college_id = selectedCollegeId;
         if (signupRole === "student" && studentId.trim()) updates.student_id = studentId.trim().toUpperCase();
         
-        if (Object.keys(updates).length > 0) {
-          await supabase
+        await supabase
+          .from("profiles")
+          .update(updates)
+          .eq("user_id", data.user!.id);
+
+        // Notify college admin about the new registration
+        if (selectedCollegeId) {
+          // Find college admin(s) for this college
+          const { data: collegeAdmins } = await supabase
             .from("profiles")
-            .update(updates)
-            .eq("user_id", data.user!.id);
+            .select("user_id")
+            .eq("college_id", selectedCollegeId);
+          
+          if (collegeAdmins) {
+            const { data: adminRoles } = await supabase
+              .from("user_roles")
+              .select("user_id")
+              .in("user_id", collegeAdmins.map(a => a.user_id))
+              .eq("role", "college_admin");
+            
+            if (adminRoles) {
+              for (const admin of adminRoles) {
+                await supabase.from("notifications").insert({
+                  title: "New User Registration 🆕",
+                  message: `${signupName} (${signupEmail}) has registered as a ${roleLabels[signupRole]} and is awaiting your approval.`,
+                  sent_by: data.user!.id,
+                  target_user_id: admin.user_id,
+                  college_id: selectedCollegeId,
+                });
+              }
+            }
+          }
         }
-      }, 1000);
+      }, 1500);
     }
 
     // If non-student role, create a role request
@@ -119,15 +146,14 @@ const Auth = () => {
           user_id: data.user!.id,
           requested_role: signupRole,
         });
-      }, 1000);
+      }, 1500);
     }
 
     setLoading(false);
-    if (signupRole === "student") {
-      toast.success("Check your email to confirm your account!");
-    } else {
-      toast.success("Account created! Your role request is pending admin approval. You can log in as a student for now.");
-    }
+    toast.success(
+      "Account created! Your account is pending college admin approval. You'll be notified once approved.",
+      { duration: 6000 }
+    );
     setTab("login");
   };
 

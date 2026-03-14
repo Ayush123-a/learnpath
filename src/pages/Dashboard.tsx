@@ -14,6 +14,7 @@ import {
   CalendarDays, Clock, Calendar, ChevronRight, User, Radio, Bell, Building2,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import PendingApprovalBanner from "@/components/PendingApprovalBanner";
 
 const studentFeatures = [
   { label: "Video Lectures", icon: Play, href: "/courses", desc: "Browse & watch lectures", color: "from-primary to-info" },
@@ -148,6 +149,7 @@ const Dashboard = () => {
       </header>
 
       <main className="px-3 md:container py-4 md:py-8">
+        <PendingApprovalBanner />
         <AdBanner slot="dashboard-top" format="horizontal" className="mb-4 md:mb-6" />
 
         {/* Welcome */}

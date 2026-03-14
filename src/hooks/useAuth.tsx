@@ -10,6 +10,7 @@ interface AuthContextType {
   roles: AppRole[];
   collegeId: string | null;
   collegeName: string | null;
+  approvalStatus: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   roles: [],
   collegeId: null,
   collegeName: null,
+  approvalStatus: null,
   loading: true,
   signOut: async () => {},
 });
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [collegeId, setCollegeId] = useState<string | null>(null);
   const [collegeName, setCollegeName] = useState<string | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const rolesCache = useRef<Record<string, AppRole[]>>({});
@@ -55,11 +58,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchCollege = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("college_id, colleges(name)")
+      .select("college_id, approval_status, colleges(name)")
       .eq("user_id", userId)
       .single();
     if (data) {
       setCollegeId(data.college_id);
+      setApprovalStatus((data as any).approval_status || null);
       setCollegeName((data as any).colleges?.name || null);
     }
   };
@@ -98,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, roles, collegeId, collegeName, loading, signOut }}>
+    <AuthContext.Provider value={{ session, user, roles, collegeId, collegeName, approvalStatus, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
