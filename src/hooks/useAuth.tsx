@@ -21,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   roles: [],
   collegeId: null,
   collegeName: null,
+  approvalStatus: null,
   loading: true,
   signOut: async () => {},
 });
