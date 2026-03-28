@@ -42,39 +42,39 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden py-20 md:py-32">
+      <section className="relative overflow-hidden py-14 md:py-32">
         <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
-        <div className="absolute inset-0 section-pattern opacity-50" />
-        {/* Floating decorative orbs */}
-        <div className="absolute top-20 right-10 h-72 w-72 rounded-full bg-primary/5 blur-3xl animate-float" />
-        <div className="absolute bottom-10 left-10 h-56 w-56 rounded-full bg-accent/5 blur-3xl animate-float" style={{ animationDelay: "3s" }} />
+        <div className="absolute inset-0 section-pattern opacity-50 hidden md:block" />
+        {/* Floating decorative orbs — desktop only */}
+        <div className="absolute top-20 right-10 h-72 w-72 rounded-full bg-primary/5 blur-3xl animate-float hidden md:block" />
+        <div className="absolute bottom-10 left-10 h-56 w-56 rounded-full bg-accent/5 blur-3xl animate-float hidden md:block" style={{ animationDelay: "3s" }} />
 
         <div className="container relative text-center">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-5 py-2 text-sm font-medium text-accent mb-8 shadow-sm">
             <Sparkles className="h-4 w-4" />
             India's University Learning Platform
           </div>
-          <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl leading-tight">
+          <h1 className="mx-auto max-w-4xl font-display text-3xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl leading-tight">
             Your Degree,{" "}
             <span className="gradient-text">Simplified</span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
             Video lectures, notes, mock tests & AI doubt-solving — everything you need for BCA, BBA, BCom, MCA & MBA in one place.
           </p>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" className="btn-gradient gap-2 px-8 text-base rounded-xl h-12" asChild>
+          <div className="mt-8 md:mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Button size="lg" className="btn-gradient gap-2 px-8 text-base rounded-xl h-12 w-full sm:w-auto" asChild>
               <Link to="/auth">
                 Start Learning Free
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
+            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 w-full sm:w-auto border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
               <Link to="/courses">
                 <Play className="h-4 w-4 text-primary" />
                 Explore Courses
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
+            <Button variant="outline" size="lg" className="gap-2 px-8 text-base rounded-xl h-12 w-full sm:w-auto border-border/50 hover:bg-primary/5 hover:border-primary/30" asChild>
               <Link to="/register-college">
                 <Building2 className="h-4 w-4 text-primary" />
                 Register Your College
