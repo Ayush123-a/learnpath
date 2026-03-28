@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap&font-display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap&font-display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -124,6 +124,10 @@
     font-family: 'Source Sans 3', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -133,14 +137,24 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl;
+    @apply bg-card/80 border border-border/50 rounded-xl;
     box-shadow: var(--shadow-card);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    will-change: auto;
   }
-  .glass-card:hover {
-    box-shadow: var(--shadow-card-hover);
+  @media (min-width: 768px) {
+    .glass-card {
+      @apply backdrop-blur-sm;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    }
+    .glass-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      @apply border-primary/20;
+      transform: translateY(-2px);
+    }
+  }
+  .glass-card:active {
     @apply border-primary/20;
-    transform: translateY(-2px);
   }
 
   .gradient-text {
@@ -175,19 +189,48 @@
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  /* Disable heavy animations on mobile / reduced-motion */
+  @media (prefers-reduced-motion: reduce), (max-width: 767px) {
+    .animate-float, .animate-glow {
+      animation: none !important;
+    }
   }
+
+  @media (min-width: 768px) {
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    .animate-glow {
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+  }
+
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-8px); }
   }
-
-  .animate-glow {
-    animation: glow 3s ease-in-out infinite alternate;
-  }
   @keyframes glow {
     from { box-shadow: 0 0 12px hsl(var(--primary) / 0.15); }
     to { box-shadow: 0 0 24px hsl(var(--primary) / 0.3); }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ensure minimum touch target size (48px) */
+  @media (pointer: coarse) {
+    button, a, [role="button"], [role="tab"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    input, select, textarea {
+      min-height: 44px;
+      font-size: 16px; /* Prevent iOS zoom on focus */
+    }
   }
 }
