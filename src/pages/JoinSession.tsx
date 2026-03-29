@@ -22,38 +22,32 @@ const JoinSession = () => {
   const queryClient = useQueryClient();
   const [inviteCode, setInviteCode] = useState("");
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
-  }
-  if (!user) return <Navigate to="/auth" replace />;
-
-  // Fetch sessions user has joined
   const { data: mySessions = [], isLoading } = useQuery({
-    queryKey: ["my-sessions", user.id],
+    queryKey: ["my-sessions", user?.id],
+    enabled: !!user,
     queryFn: async () => {
+      if (!user) return [];
       const { data: participations, error: pErr } = await supabase
         .from("session_participants")
         .select("session_id")
         .eq("user_id", user.id);
       if (pErr) throw pErr;
-      if (!participations.length) return [];
-      const sessionIds = participations.map((p) => p.session_id);
+      if (!participations?.length) return [];
+      const sessionIds = participations.map((p: { session_id: string }) => p.session_id);
       const { data, error } = await supabase
         .from("sessions")
         .select("*")
         .in("id", sessionIds)
         .order("scheduled_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
   const joinMutation = useMutation({
     mutationFn: async (code: string) => {
+      if (!user) throw new Error("Unauthorized");
+
       // Find session by invite code
       const { data: session, error: findErr } = await supabase
         .from("sessions")
@@ -79,15 +73,26 @@ const JoinSession = () => {
         attendance_marked: true,
       });
       if (joinErr) throw joinErr;
+
       return session;
     },
     onSuccess: (session) => {
-      queryClient.invalidateQueries({ queryKey: ["my-sessions"] });
-      toast.success(`Joined "${session.title}" successfully!`);
-      setInviteCode("");
+      toast.success(`Joined session ${session.title}`);
+      queryClient.invalidateQueries(["my-sessions", user?.id]);
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Could not join session");
+    },
   });
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/auth" replace />;
 
   return (
     <div className="min-h-screen bg-background">

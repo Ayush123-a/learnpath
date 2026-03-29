@@ -141,8 +141,8 @@ const DocumentScanner = ({ onPdfReady }: DocumentScannerProps) => {
 
       setPages([]);
       closeScanner();
-    } catch (err: any) {
-      toast({ title: "PDF generation failed", description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: "PDF generation failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
     } finally {
       setGenerating(false);
     }

@@ -8,12 +8,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bell, Check, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 const NotificationBell = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
-  const { data: notifications = [] } = useQuery({
+  const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["user-notifications", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -22,13 +30,13 @@ const NotificationBell = () => {
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
-      return data;
+      return data as Notification[];
     },
     enabled: !!user,
     refetchInterval: 30000,
   });
 
-  const unreadCount = notifications.filter((n: any) => !n.is_read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   const markReadMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -39,7 +47,7 @@ const NotificationBell = () => {
 
   const markAllReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadIds = notifications.filter((n: any) => !n.is_read).map((n: any) => n.id);
+      const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id);
       if (unreadIds.length) {
         await supabase.from("notifications").update({ is_read: true }).in("id", unreadIds);
       }
@@ -80,7 +88,7 @@ const NotificationBell = () => {
             </div>
           ) : (
             <div>
-              {notifications.map((n: any) => (
+              {notifications.map((n) => (
                 <button
                   key={n.id}
                   className={`w-full text-left px-4 py-3 border-b border-border/50 hover:bg-muted/50 transition-colors ${

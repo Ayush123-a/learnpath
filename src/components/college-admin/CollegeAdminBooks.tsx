@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,7 @@ const CollegeAdminBooks = () => {
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
     if (!collegeId) return;
     setLoading(true);
     const { data } = await supabase
@@ -24,9 +24,9 @@ const CollegeAdminBooks = () => {
       .order("created_at", { ascending: false });
     setBooks(data || []);
     setLoading(false);
-  };
+  }, [collegeId]);
 
-  useEffect(() => { fetchBooks(); }, [collegeId]);
+  useEffect(() => { fetchBooks(); }, [fetchBooks]);
 
   const togglePublished = async (id: string, current: boolean) => {
     const { error } = await supabase.from("books").update({ is_published: !current }).eq("id", id);

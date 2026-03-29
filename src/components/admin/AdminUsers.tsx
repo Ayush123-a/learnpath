@@ -84,54 +84,101 @@ const AdminUsers = () => {
         {loading ? (
           <div className="flex justify-center py-8"><div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" /></div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Roles</TableHead>
-                  <TableHead>Add Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((u) => (
-                  <TableRow key={u.user_id}>
-                    <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{u.email}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {u.roles.map((r) => (
-                          <Badge key={r} variant="secondary" className="gap-1 text-xs">
-                            {r}
-                            <button onClick={() => removeRole(u.user_id, r)} className="ml-1 hover:text-destructive">
-                              <Trash2 className="h-3 w-3" />
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Select onValueChange={(val) => addRole(u.user_id, val as AppRole)}>
-                        <SelectTrigger className="w-36 h-8">
-                          <SelectValue placeholder="Add role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ALL_ROLES.filter((r) => !u.roles.includes(r)).map((r) => (
-                            <SelectItem key={r} value={r}>{r}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(u.created_at).toLocaleDateString()}
-                    </TableCell>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Roles</TableHead>
+                    <TableHead>Add Role</TableHead>
+                    <TableHead>Joined</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((u) => (
+                    <TableRow key={u.user_id}>
+                      <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{u.email}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {u.roles.map((r) => (
+                            <Badge key={r} variant="secondary" className="gap-1 text-xs">
+                              {r}
+                              <button onClick={() => removeRole(u.user_id, r)} className="ml-1 hover:text-destructive">
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select onValueChange={(val) => addRole(u.user_id, val as AppRole)}>
+                          <SelectTrigger className="w-36 h-8">
+                            <SelectValue placeholder="Add role..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ALL_ROLES.filter((r) => !u.roles.includes(r)).map((r) => (
+                              <SelectItem key={r} value={r}>{r}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(u.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+              {filtered.map((u) => (
+                <Card key={u.user_id}>
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-medium">{u.full_name || "—"}</h3>
+                        <p className="text-sm text-muted-foreground">{u.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium mb-2">Roles:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {u.roles.map((r) => (
+                            <Badge key={r} variant="secondary" className="gap-1 text-xs">
+                              {r}
+                              <button onClick={() => removeRole(u.user_id, r)} className="ml-1 hover:text-destructive">
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium mb-2">Add Role:</p>
+                        <Select onValueChange={(val) => addRole(u.user_id, val as AppRole)}>
+                          <SelectTrigger className="w-full h-8">
+                            <SelectValue placeholder="Select role..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ALL_ROLES.filter((r) => !u.roles.includes(r)).map((r) => (
+                              <SelectItem key={r} value={r}>{r}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Joined: {new Date(u.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

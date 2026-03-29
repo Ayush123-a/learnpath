@@ -8,8 +8,18 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { BookOpen, Trash2 } from "lucide-react";
 
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  book_type: string;
+  is_free: boolean;
+  is_published: boolean;
+  created_at: string;
+}
+
 const AdminBooks = () => {
-  const [books, setBooks] = useState<any[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchBooks = async () => {

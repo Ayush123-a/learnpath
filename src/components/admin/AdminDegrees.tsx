@@ -11,11 +11,38 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { toast } from "sonner";
 import { Plus, GraduationCap, Trash2, Edit } from "lucide-react";
 
+interface Degree {
+  id: string;
+  name: string;
+  code: string;
+  duration_years: number;
+  description: string;
+}
+
+interface Year {
+  id: string;
+  degree_id: string;
+  year_number: number;
+}
+
+interface Semester {
+  id: string;
+  year_id: string;
+  semester_number: number;
+}
+
+interface Subject {
+  id: string;
+  semester_id: string;
+  name: string;
+  code: string;
+}
+
 const AdminDegrees = () => {
-  const [degrees, setDegrees] = useState<any[]>([]);
-  const [years, setYears] = useState<any[]>([]);
-  const [semesters, setSemesters] = useState<any[]>([]);
-  const [subjects, setSubjects] = useState<any[]>([]);
+  const [degrees, setDegrees] = useState<Degree[]>([]);
+  const [years, setYears] = useState<Year[]>([]);
+  const [semesters, setSemesters] = useState<Semester[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [newDegree, setNewDegree] = useState({ name: "", code: "", duration_years: 3, description: "" });

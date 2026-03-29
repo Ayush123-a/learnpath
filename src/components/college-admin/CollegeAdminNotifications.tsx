@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +21,7 @@ const CollegeAdminNotifications = () => {
   const [targetRole, setTargetRole] = useState("all");
   const [sending, setSending] = useState(false);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!collegeId) return;
     setLoading(true);
     const { data } = await supabase
@@ -32,9 +32,9 @@ const CollegeAdminNotifications = () => {
       .limit(50);
     setNotifications(data || []);
     setLoading(false);
-  };
+  }, [collegeId]);
 
-  useEffect(() => { fetchNotifications(); }, [collegeId]);
+  useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
 
   const sendNotification = async () => {
     if (!title || !message) return toast.error("Title and message required");

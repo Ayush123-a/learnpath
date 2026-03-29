@@ -16,7 +16,7 @@ const PendingApprovalBanner = () => {
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setStatus((data as any).approval_status);
+        if (data) setStatus((data as { approval_status: string }).approval_status);
       });
   }, [user]);
 

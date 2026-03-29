@@ -52,20 +52,22 @@ const MockTest = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  useEffect(() => {
+  const loadQuiz = useCallback(async () => {
     if (!quizId) return;
-    loadQuiz();
-  }, [quizId]);
 
-  const loadQuiz = async () => {
     const [qRes, questRes] = await Promise.all([
-      supabase.from("quizzes").select("id, title, description, duration_minutes, total_marks, negative_marking, negative_mark_value, quiz_type").eq("id", quizId!).single(),
-      supabase.from("questions").select("*").eq("quiz_id", quizId!).order("sort_order"),
+      supabase.from("quizzes").select("id, title, description, duration_minutes, total_marks, negative_marking, negative_mark_value, quiz_type").eq("id", quizId).single(),
+      supabase.from("questions").select("*").eq("quiz_id", quizId).order("sort_order"),
     ]);
+
     if (qRes.data) setQuiz(qRes.data as unknown as Quiz);
     if (questRes.data) setQuestions(questRes.data as unknown as Question[]);
     setPhase("intro");
-  };
+  }, [quizId]);
+
+  useEffect(() => {
+    loadQuiz();
+  }, [loadQuiz]);
 
   const startTest = () => {
     if (!quiz) return;
@@ -123,7 +125,11 @@ const MockTest = () => {
     if (!qId) return;
     setFlagged(prev => {
       const next = new Set(prev);
-      next.has(qId) ? next.delete(qId) : next.add(qId);
+      if (next.has(qId)) {
+        next.delete(qId);
+      } else {
+        next.add(qId);
+      }
       return next;
     });
   };

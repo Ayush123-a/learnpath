@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +25,7 @@ const CollegeAdminApprovals = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("pending");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     if (!collegeId) return;
     setLoading(true);
     const { data: profiles } = await supabase
@@ -53,9 +53,9 @@ const CollegeAdminApprovals = () => {
       setUsers(mapped);
     }
     setLoading(false);
-  };
+  }, [collegeId]);
 
-  useEffect(() => { fetchUsers(); }, [collegeId]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const updateApproval = async (userId: string, status: "approved" | "rejected") => {
     const { error } = await supabase

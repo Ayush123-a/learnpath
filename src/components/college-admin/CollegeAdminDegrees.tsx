@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,7 @@ const CollegeAdminDegrees = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [newDegree, setNewDegree] = useState({ name: "", code: "", duration_years: 3, description: "" });
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     if (!collegeId) return;
     setLoading(true);
     const [d, y, s, sub] = await Promise.all([
@@ -36,9 +36,9 @@ const CollegeAdminDegrees = () => {
     setSemesters(s.data || []);
     setSubjects(sub.data || []);
     setLoading(false);
-  };
+  }, [collegeId]);
 
-  useEffect(() => { fetchAll(); }, [collegeId]);
+  useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const addDegree = async () => {
     if (!newDegree.name || !newDegree.code) return toast.error("Name and code required");

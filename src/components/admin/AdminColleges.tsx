@@ -11,6 +11,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "sonner";
 import { Plus, Building2, Trash2, Edit, Users, MapPin } from "lucide-react";
 
+interface College {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  is_active: boolean;
+}
+
 const AdminColleges = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -24,7 +35,7 @@ const AdminColleges = () => {
     state: "",
   });
 
-  const { data: colleges = [], isLoading } = useQuery({
+  const { data: colleges = [], isLoading } = useQuery<College[]>({
     queryKey: ["admin-colleges"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -32,7 +43,7 @@ const AdminColleges = () => {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data as College[];
     },
   });
 
@@ -46,7 +57,7 @@ const AdminColleges = () => {
         .not("college_id", "is", null);
       if (error) throw error;
       const counts: Record<string, number> = {};
-      data.forEach((p: any) => {
+      data.forEach((p: { college_id: string }) => {
         counts[p.college_id] = (counts[p.college_id] || 0) + 1;
       });
       return counts;
@@ -69,7 +80,7 @@ const AdminColleges = () => {
       setOpen(false);
       resetForm();
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error"),
   });
 
   const deleteMutation = useMutation({
@@ -100,7 +111,7 @@ const AdminColleges = () => {
     setEditId(null);
   };
 
-  const openEdit = (college: any) => {
+  const openEdit = (college: College) => {
     setForm({
       name: college.name,
       code: college.code,
@@ -176,7 +187,7 @@ const AdminColleges = () => {
       ) : (
         <>
           {/* Pending Approval Section */}
-          {colleges.filter((c: any) => !c.is_active).length > 0 && (
+          {colleges.filter((c) => !c.is_active).length > 0 && (
             <Card className="border-warning/30 mb-4">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold text-warning flex items-center gap-2">
@@ -184,7 +195,7 @@ const AdminColleges = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {colleges.filter((c: any) => !c.is_active).map((college: any) => (
+                {colleges.filter((c) => !c.is_active).map((college) => (
                   <div key={college.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-muted/30">
                     <div>
                       <div className="flex items-center gap-2">

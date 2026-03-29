@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, AppRole } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +27,7 @@ const CollegeAdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     if (!collegeId) return;
     setLoading(true);
     const { data: profiles } = await supabase
@@ -54,9 +54,9 @@ const CollegeAdminUsers = () => {
       setUsers(mapped);
     }
     setLoading(false);
-  };
+  }, [collegeId]);
 
-  useEffect(() => { fetchUsers(); }, [collegeId]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const addRole = async (userId: string, role: AppRole) => {
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
