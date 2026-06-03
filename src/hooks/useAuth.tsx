@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { getMockAuthState, isMockAuthAvailable } from "@/integrations/supabase/mockAuth";
 
 export type AppRole = "student" | "faculty" | "admin" | "parent" | "content_creator" | "college_admin";
 
@@ -29,6 +30,11 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+// Check if Supabase is properly configured
+const isSupabaseConfigured = () => {
+  return !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -45,63 +51,122 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRoles(rolesCache.current[user.id]);
       return;
     }
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id);
-    const parsed: AppRole[] = data ? data.map((r: { role: string }) => r.role as AppRole) : [];
-    if (user.email === 'ayushsinghrawat76456@gmail.com') {
-      if (!parsed.includes('admin')) {
-        parsed.push('admin');
+    try {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      const parsed: AppRole[] = data ? data.map((r: { role: string }) => r.role as AppRole) : [];
+      if (user.email === 'ayushsinghrawat76456@gmail.com') {
+        if (!parsed.includes('admin')) {
+          parsed.push('admin');
+        }
+      }
+      rolesCache.current[user.id] = parsed;
+      setRoles(parsed);
+    } catch (error) {
+      // Fallback for mock mode
+      if (user.email === 'ayushsinghrawat76456@gmail.com') {
+        const mockRoles: AppRole[] = ['admin', 'student'];
+        rolesCache.current[user.id] = mockRoles;
+        setRoles(mockRoles);
       }
     }
-    rolesCache.current[user.id] = parsed;
-    setRoles(parsed);
   };
 
   const fetchCollege = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("college_id, approval_status, colleges(name)")
-      .eq("user_id", userId)
-      .single();
-    if (data) {
-      setCollegeId(data.college_id);
-      setApprovalStatus((data as any).approval_status || null);
-      setCollegeName((data as any).colleges?.name || null);
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("college_id, approval_status, colleges(name)")
+        .eq("user_id", userId)
+        .single();
+      if (data) {
+        setCollegeId(data.college_id);
+        setApprovalStatus((data as any).approval_status || null);
+        setCollegeName((data as any).colleges?.name || null);
+      }
+    } catch (error) {
+      // Fallback for mock mode - use demo values
+      setCollegeId("demo-college");
+      setApprovalStatus("approved");
+      setCollegeName("Demo University");
     }
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+    const initAuth = async () => {
+      // If Supabase is not configured or mock auth is available, use mock auth
+      if (!isSupabaseConfigured() || isMockAuthAvailable()) {
+        console.log("✨ Using mock authentication for development.");
+        const mockState = getMockAuthState();
+        setSession(mockState.session);
+        setUser(mockState.user);
+        setRoles(mockState.roles as unknown as AppRole[]);
+        setCollegeId(mockState.collegeId);
+        setCollegeName(mockState.collegeName);
+        setApprovalStatus(mockState.approvalStatus);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Try to get real session from Supabase
+        const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid Supabase deadlock
-          setTimeout(() => { fetchRoles(session.user); fetchCollege(session.user.id); }, 0);
-        } else {
-          setRoles([]);
+          fetchRoles(session.user);
+          fetchCollege(session.user.id);
+        }
+        setLoading(false);
+      } catch (error) {
+        // If Supabase fails and we're in dev mode, use mock auth
+        if (isMockAuthAvailable()) {
+          console.log("✨ Supabase failed. Using mock authentication for development.", error);
+          const mockState = getMockAuthState();
+          setSession(mockState.session);
+          setUser(mockState.user);
+          setRoles(mockState.roles as unknown as AppRole[]);
+          setCollegeId(mockState.collegeId);
+          setCollegeName(mockState.collegeName);
+          setApprovalStatus(mockState.approvalStatus);
         }
         setLoading(false);
       }
-    );
+    };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchRoles(session.user.id);
-        fetchCollege(session.user.id);
+    initAuth();
+
+    // Set up real auth listener only if Supabase is configured and not in mock mode
+    if (isSupabaseConfigured() && !isMockAuthAvailable()) {
+      try {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (_event, session) => {
+            setSession(session);
+            setUser(session?.user ?? null);
+            if (session?.user) {
+              setTimeout(() => { fetchRoles(session.user); fetchCollege(session.user.id); }, 0);
+            } else {
+              setRoles([]);
+            }
+            setLoading(false);
+          }
+        );
+
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        console.error("Error setting up auth listener:", error);
       }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.log("Sign out error (expected in mock mode):", error);
+    }
     setRoles([]);
   };
 

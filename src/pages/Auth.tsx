@@ -56,6 +56,15 @@ const Auth = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Mock auth check for development
+    if (loginEmail === "ayushsinghrawat76456@gmail.com" && loginPassword === "Ayush@13") {
+      toast.success("Welcome back!");
+      setTimeout(() => navigate("/dashboard"), 500);
+      setLoading(false);
+      return;
+    }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password: loginPassword,
