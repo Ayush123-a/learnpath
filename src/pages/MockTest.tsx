@@ -93,7 +93,7 @@ const MockTest = () => {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [phase, timeLeft]);
+  }, [phase, timeLeft, submitTest]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);

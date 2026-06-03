@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap&font-display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap&font-display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,48 +6,57 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 222 47% 11%;
+    /* The Verge - Dark Canvas Theme */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 225 73% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Brand Hazards */
+    --primary: 175 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 220 20% 93%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 275 100% 50%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 220 20% 95%;
-    --muted-foreground: 220 13% 46%;
+    --muted: 0 0% 45%;
+    --muted-foreground: 0 0% 85%;
 
-    --accent: 45 93% 47%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 175 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 225 73% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 175 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1.5rem;
 
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(225 73% 50%), hsl(250 73% 55%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 93% 47%), hsl(38 92% 55%));
-    --gradient-hero: linear-gradient(160deg, hsl(225 73% 50% / 0.08), hsl(45 93% 47% / 0.06), transparent);
-    --shadow-card: 0 1px 3px hsl(222 47% 11% / 0.04), 0 4px 12px hsl(222 47% 11% / 0.03);
-    --shadow-card-hover: 0 4px 16px hsl(225 73% 50% / 0.1), 0 8px 32px hsl(222 47% 11% / 0.06);
+    /* Theverge Brand Colors */
+    --verge-mint: 175 100% 50%;
+    --verge-ultraviolet: 275 100% 50%;
+    --verge-black: 0 0% 7%;
+    --verge-slate: 0 0% 18%;
+    --verge-white: 0 0% 100%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(175 100% 50%), hsl(200 100% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(275 100% 50%), hsl(250 100% 55%));
+    --gradient-hero: linear-gradient(160deg, hsl(175 100% 50% / 0.12), hsl(275 100% 50% / 0.08), transparent);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.2), 0 4px 12px hsl(0 0% 0% / 0.1);
+    --shadow-card-hover: 0 4px 16px hsl(175 100% 50% / 0.2), 0 8px 32px hsl(0 0% 0% / 0.25);
     --shadow-primary: 0 4px 14px hsl(225 73% 50% / 0.3);
 
     --sidebar-background: 225 40% 8%;
@@ -61,56 +70,55 @@
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 220 20% 96%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
 
-    --card: 222 40% 9%;
-    --card-foreground: 220 20% 96%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 222 40% 9%;
-    --popover-foreground: 220 20% 96%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 225 73% 57%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 175 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 222 40% 14%;
-    --secondary-foreground: 220 20% 96%;
+    --secondary: 275 100% 50%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 222 40% 14%;
-    --muted-foreground: 220 16% 55%;
+    --muted: 0 0% 45%;
+    --muted-foreground: 0 0% 85%;
 
-    --accent: 45 93% 52%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 175 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 63% 31%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 40% 16%;
-    --input: 222 40% 16%;
-    --ring: 225 73% 57%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 175 100% 50%;
 
-    --success: 142 71% 40%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(225 73% 57%), hsl(250 73% 60%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 93% 52%), hsl(38 92% 58%));
-    --gradient-hero: linear-gradient(160deg, hsl(225 73% 57% / 0.12), hsl(45 93% 52% / 0.06), transparent);
-    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.2), 0 4px 12px hsl(0 0% 0% / 0.15);
-    --shadow-card-hover: 0 4px 16px hsl(225 73% 57% / 0.15), 0 8px 32px hsl(0 0% 0% / 0.2);
-    --shadow-primary: 0 4px 14px hsl(225 73% 57% / 0.4);
+    --gradient-primary: linear-gradient(135deg, hsl(175 100% 50%), hsl(200 100% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(275 100% 50%), hsl(250 100% 55%));
+    --gradient-hero: linear-gradient(160deg, hsl(175 100% 50% / 0.12), hsl(275 100% 50% / 0.08), transparent);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.3), 0 4px 12px hsl(0 0% 0% / 0.15);
+    --shadow-card-hover: 0 4px 16px hsl(175 100% 50% / 0.25), 0 8px 32px hsl(0 0% 0% / 0.3);
 
-    --sidebar-background: 222 47% 4%;
-    --sidebar-foreground: 220 20% 96%;
-    --sidebar-primary: 225 73% 57%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 40% 10%;
-    --sidebar-accent-foreground: 220 20% 96%;
-    --sidebar-border: 222 40% 14%;
-    --sidebar-ring: 225 73% 57%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 175 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 275 100% 50%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 175 100% 50%;
   }
 }
 
@@ -121,7 +129,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
@@ -131,30 +139,84 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+  }
+
+  /* Theverge Typography */
+  .text-display-xl {
+    @apply text-6xl md:text-7xl font-bold;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .text-display-lg {
+    @apply text-5xl md:text-6xl font-bold;
+    letter-spacing: 0.015em;
+  }
+
+  .text-display-md {
+    @apply text-4xl md:text-5xl font-bold;
+    letter-spacing: 0.01em;
+  }
+
+  .text-headline-lg {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+
+  .text-headline-md {
+    @apply text-xl md:text-2xl font-bold;
+  }
+
+  .text-label-mono {
+    font-family: 'Space Mono', monospace;
+    @apply text-xs font-bold tracking-wider;
   }
 }
 
 @layer components {
+  /* Theverge Design System Components */
+  .verge-card {
+    @apply rounded-3xl border border-primary/20 bg-background;
+    box-shadow: 0 1px 3px hsl(0 0% 0% / 0.3);
+    transition: all 0.3s ease;
+  }
+  .verge-card:hover {
+    @apply border-primary/50;
+    box-shadow: 0 4px 16px hsl(175 100% 50% / 0.25);
+    transform: translateY(-2px);
+  }
+
+  .verge-pill {
+    @apply rounded-full px-6 py-3 font-semibold;
+  }
+
+  .verge-accent {
+    @apply bg-gradient-to-br from-primary to-primary/80 text-primary-foreground;
+  }
+
+  .verge-secondary {
+    @apply bg-gradient-to-br from-secondary to-secondary/80 text-secondary-foreground;
+  }
+
+  .verge-border {
+    @apply border-primary/30;
+  }
+
   .glass-card {
-    @apply bg-card/80 border border-border/50 rounded-xl;
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    will-change: auto;
+    @apply rounded-3xl border border-primary/20 bg-background/80;
+    box-shadow: 0 1px 3px hsl(0 0% 0% / 0.2);
+    transition: all 0.3s ease;
   }
   @media (min-width: 768px) {
     .glass-card {
-      @apply backdrop-blur-sm;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+      @apply backdrop-blur-xl;
     }
     .glass-card:hover {
-      box-shadow: var(--shadow-card-hover);
-      @apply border-primary/20;
+      @apply border-primary/50;
+      box-shadow: 0 8px 32px hsl(175 100% 50% / 0.25);
       transform: translateY(-2px);
     }
-  }
-  .glass-card:active {
-    @apply border-primary/20;
   }
 
   .gradient-text {
@@ -162,29 +224,52 @@
     background-image: var(--gradient-primary);
   }
 
-  .gradient-gold {
+  .gradient-secondary {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-gold);
+    background-image: var(--gradient-secondary);
   }
 
   .btn-gradient {
     background-image: var(--gradient-primary);
-    box-shadow: var(--shadow-primary);
-    @apply text-primary-foreground font-semibold;
-    transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    @apply text-primary-foreground font-semibold rounded-lg;
+    transition: all 0.2s ease;
   }
   .btn-gradient:hover {
     opacity: 0.92;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px hsl(175 100% 50% / 0.3);
+  }
+
+  .btn-outline-verge {
+    @apply border-2 border-primary text-primary;
+    transition: all 0.2s ease;
+  }
+  .btn-outline-verge:hover {
+    @apply bg-primary/10;
   }
 
   .section-pattern {
-    background-image: radial-gradient(hsl(var(--primary) / 0.04) 1px, transparent 1px);
+    background-image: radial-gradient(hsl(175 100% 50% / 0.08) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
-  .gold-badge {
-    @apply bg-accent/15 text-accent border border-accent/25 font-semibold;
+  .accent-badge {
+    @apply bg-primary/15 text-primary border border-primary/30 font-semibold rounded-full px-4 py-1.5;
+  }
+
+  .verge-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .verge-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gradient-secondary);
+    border-radius: 1px;
   }
 }
 

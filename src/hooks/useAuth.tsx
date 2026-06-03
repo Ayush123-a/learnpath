@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id);
-    let parsed: AppRole[] = data ? data.map((r: { role: string }) => r.role as AppRole) : [];
+    const parsed: AppRole[] = data ? data.map((r: { role: string }) => r.role as AppRole) : [];
     if (user.email === 'ayushsinghrawat76456@gmail.com') {
       if (!parsed.includes('admin')) {
         parsed.push('admin');

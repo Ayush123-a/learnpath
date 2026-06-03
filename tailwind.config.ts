@@ -14,8 +14,9 @@ export default {  darkMode: ["class"],
     },
     extend: {
       fontFamily: {
-        sans: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
-        display: ['"Playfair Display"', 'serif'],
+        sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
+        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -73,11 +74,25 @@ export default {  darkMode: ["class"],
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* The Verge Design System Colors */
+        verge: {
+          mint: "hsl(175 100% 50%)",
+          "mint-dark": "hsl(175 100% 40%)",
+          ultraviolet: "hsl(275 100% 50%)",
+          "ultraviolet-dark": "hsl(275 100% 40%)",
+          black: "hsl(0 0% 7%)",
+          slate: "hsl(0 0% 18%)",
+          "slate-light": "hsl(0 0% 25%)",
+          white: "hsl(0 0% 100%)",
+          gray: "hsl(0 0% 45%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "3xl": "1.5rem",
+        "4xl": "2rem",
       },
       keyframes: {
         "accordion-down": {
@@ -96,10 +111,19 @@ export default {  darkMode: ["class"],
             height: "0",
           },
         },
+        float: {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-20px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },
