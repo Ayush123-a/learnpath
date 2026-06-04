@@ -49,9 +49,15 @@ const queryClient = new QueryClient({
 
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-background">
-    <div className="flex flex-col items-center gap-3">
-      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-      <p className="text-sm text-muted-foreground">Loading...</p>
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative">
+        <div className="h-12 w-12 rounded-full border-4 border-primary/20" />
+        <div className="absolute inset-0 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+      <div className="text-center">
+        <p className="text-sm font-semibold text-foreground">Learn<span className="text-primary">Path</span></p>
+        <p className="text-xs text-muted-foreground mt-0.5">Loading...</p>
+      </div>
     </div>
   </div>
 );

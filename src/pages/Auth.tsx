@@ -2,14 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { GraduationCap, Mail, Lock, User, ArrowLeft, IdCard, ShieldCheck, Building2 } from "lucide-react";
+import { Mail, Lock, User, ArrowLeft, IdCard, ShieldCheck, Building2, GraduationCap, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
@@ -27,11 +23,9 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"login" | "signup">("login");
 
-  // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  // Signup state
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupName, setSignupName] = useState("");
@@ -39,15 +33,10 @@ const Auth = () => {
   const [studentId, setStudentId] = useState("");
   const [selectedCollegeId, setSelectedCollegeId] = useState("");
 
-  // Fetch colleges for signup
   const { data: colleges = [] } = useQuery({
     queryKey: ["colleges-list"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("colleges")
-        .select("id, name, code")
-        .eq("is_active", true)
-        .order("name");
+      const { data, error } = await supabase.from("colleges").select("id, name, code").eq("is_active", true).order("name");
       if (error) throw error;
       return data;
     },
@@ -56,299 +45,228 @@ const Auth = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Mock auth check for development
     if (loginEmail === "ayushsinghrawat76456@gmail.com" && loginPassword === "Ayush@13") {
       toast.success("Welcome back!");
       setTimeout(() => navigate("/dashboard"), 500);
       setLoading(false);
       return;
     }
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password: loginPassword,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
     setLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Welcome back!");
-      navigate("/dashboard");
-    }
+    if (error) toast.error(error.message);
+    else { toast.success("Welcome back!"); navigate("/dashboard"); }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (signupRole === "student" && !studentId.trim()) {
-      toast.error("Please enter your Student ID");
-      return;
-    }
-    if (!selectedCollegeId && colleges.length > 0) {
-      toast.error("Please select your college");
-      return;
-    }
+    if (signupRole === "student" && !studentId.trim()) { toast.error("Please enter your Student ID"); return; }
+    if (!selectedCollegeId && colleges.length > 0) { toast.error("Please select your college"); return; }
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
       email: signupEmail,
       password: signupPassword,
-      options: {
-        data: { full_name: signupName },
-        emailRedirectTo: window.location.origin,
-      },
+      options: { data: { full_name: signupName }, emailRedirectTo: window.location.origin },
     });
-    
-    if (error) {
-      setLoading(false);
-      toast.error(error.message);
-      return;
-    }
 
-    // Update profile with college_id and student_id
+    if (error) { setLoading(false); toast.error(error.message); return; }
+
     if (data.user) {
       setTimeout(async () => {
-        const updates: any = { approval_status: "pending" };
+        const updates: Record<string, string> = { approval_status: "pending" };
         if (selectedCollegeId) updates.college_id = selectedCollegeId;
         if (signupRole === "student" && studentId.trim()) updates.student_id = studentId.trim().toUpperCase();
-        
-        await supabase
-          .from("profiles")
-          .update(updates)
-          .eq("user_id", data.user!.id);
-
-        // Notify college admin about the new registration
-        if (selectedCollegeId) {
-          // Find college admin(s) for this college
-          const { data: collegeAdmins } = await supabase
-            .from("profiles")
-            .select("user_id")
-            .eq("college_id", selectedCollegeId);
-          
-          if (collegeAdmins) {
-            const { data: adminRoles } = await supabase
-              .from("user_roles")
-              .select("user_id")
-              .in("user_id", collegeAdmins.map(a => a.user_id))
-              .eq("role", "college_admin");
-            
-            if (adminRoles) {
-              for (const admin of adminRoles) {
-                await supabase.from("notifications").insert({
-                  title: "New User Registration 🆕",
-                  message: `${signupName} (${signupEmail}) has registered as a ${roleLabels[signupRole]} and is awaiting your approval.`,
-                  sent_by: data.user!.id,
-                  target_user_id: admin.user_id,
-                  college_id: selectedCollegeId,
-                });
-              }
-            }
-          }
-        }
+        await supabase.from("profiles").update(updates).eq("user_id", data.user!.id);
       }, 1500);
     }
 
-    // If non-student role, create a role request
     if (signupRole !== "student" && data.user) {
-      setTimeout(async () => {
-        await supabase.from("role_requests").insert({
-          user_id: data.user!.id,
-          requested_role: signupRole,
-        });
-      }, 1500);
+      setTimeout(async () => { await supabase.from("role_requests").insert({ user_id: data.user!.id, requested_role: signupRole }); }, 1500);
     }
 
     setLoading(false);
-    toast.success(
-      "Account created! Your account is pending college admin approval. You'll be notified once approved.",
-      { duration: 6000 }
-    );
+    toast.success("Account created! Pending college admin approval.", { duration: 6000 });
     setTab("login");
   };
 
+  const inputClass = "glass-input";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
-      <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2.5">
-          <img src={logo} alt="Learn Path" className="h-10 w-10 rounded" />
-          <span className="font-display text-2xl font-bold tracking-tight text-foreground">
-            Learn<span className="text-primary">Path</span>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{ background: "radial-gradient(circle at 60% 20%, #112036 0%, #041329 60%)" }}
+    >
+      {/* Blobs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-20 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full opacity-12" style={{ background: "#00e5ff", filter: "blur(100px)" }} />
+        <div className="absolute bottom-20 right-0 h-[300px] w-[300px] rounded-full opacity-8" style={{ background: "#0068ed", filter: "blur(100px)" }} />
+      </div>
+
+      <div className="w-full max-w-sm relative">
+        {/* Logo */}
+        <Link to="/" className="flex items-center justify-center gap-2.5 mb-8">
+          <img src={logo} alt="LearnPath" className="h-10 w-10 rounded-xl" />
+          <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: "Montserrat, sans-serif", color: "#d6e3ff" }}>
+            Learn<span style={{ color: "#00e5ff" }}>Path</span>
           </span>
         </Link>
 
-        <Card className="shadow-lg">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="font-display text-2xl">
+        {/* Glass card */}
+        <div
+          className="rounded-2xl p-6 md:p-8"
+          style={{
+            background: "rgba(17,32,54,0.6)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            boxShadow: "0 0 40px rgba(0,218,243,0.08)",
+          }}
+        >
+          {/* Tab switcher */}
+          <div
+            className="flex rounded-xl p-1 mb-6"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            {(["login", "signup"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  background: tab === t ? "rgba(0,229,255,0.12)" : "transparent",
+                  color: tab === t ? "#00e5ff" : "#849396",
+                  border: tab === t ? "1px solid rgba(0,229,255,0.25)" : "1px solid transparent",
+                }}
+              >
+                {t === "login" ? "Log In" : "Sign Up"}
+              </button>
+            ))}
+          </div>
+
+          {/* Title */}
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3" style={{ background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)" }}>
+              <GraduationCap className="h-6 w-6" style={{ color: "#00e5ff" }} />
+            </div>
+            <h1 className="text-xl font-bold" style={{ fontFamily: "Montserrat, sans-serif", color: "#d6e3ff" }}>
               {tab === "login" ? "Welcome Back" : "Create Account"}
-            </CardTitle>
-            <CardDescription>
-              {tab === "login"
-                ? "Sign in to continue learning"
-                : "Start your academic journey"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")}>
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Log In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
+            </h1>
+            <p className="text-sm mt-1" style={{ color: "#849396" }}>
+              {tab === "login" ? "Sign in to continue learning" : "Start your academic journey"}
+            </p>
+          </div>
 
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="login-email"
-                        type="email"
-                        placeholder="you@university.edu"
-                        className="pl-10"
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
-                        required
-                      />
-                    </div>
+          {tab === "login" ? (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                  <input id="login-email" type="email" placeholder="you@university.edu" className={`${inputClass} pl-10`} value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                  <input id="login-password" type="password" placeholder="••••••••" className={`${inputClass} pl-10`} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
+                </div>
+              </div>
+              <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-sm font-bold" style={{ borderRadius: "0.75rem" }}>
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Signing in...</> : "Sign In"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSignup} className="space-y-4">
+              {/* Role */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>I am a</label>
+                <Select value={signupRole} onValueChange={(v) => setSignupRole(v as SignupRole)}>
+                  <SelectTrigger className="glass-input border-0 ring-0 focus:ring-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(roleLabels) as SignupRole[]).map((r) => (
+                      <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {signupRole !== "student" && (
+                  <p className="text-xs flex items-center gap-1" style={{ color: "#849396" }}>
+                    <ShieldCheck className="h-3 w-3" style={{ color: "#00e5ff" }} /> Requires admin approval
+                  </p>
+                )}
+              </div>
+
+              {/* College */}
+              {colleges.length > 0 && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>College</label>
+                  <Select value={selectedCollegeId} onValueChange={setSelectedCollegeId}>
+                    <SelectTrigger className="glass-input border-0 ring-0 focus:ring-0">
+                      <SelectValue placeholder="Select your college" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colleges.map((c: { id: string; name: string; code: string }) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          <span className="flex items-center gap-2">
+                            <Building2 className="h-3 w-3" /> {c.name} ({c.code})
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Name */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                  <input id="signup-name" type="text" placeholder="Your full name" className={`${inputClass} pl-10`} value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
+                </div>
+              </div>
+
+              {/* Student ID */}
+              {signupRole === "student" && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Student ID</label>
+                  <div className="relative">
+                    <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                    <input id="signup-student-id" type="text" placeholder="e.g. BCA2024001" className={`${inputClass} pl-10 uppercase`} value={studentId} onChange={(e) => setStudentId(e.target.value)} required />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="login-password"
-                        type="password"
-                        placeholder="••••••••"
-                        className="pl-10"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing in..." : "Sign In"}
-                  </Button>
-                </form>
-              </TabsContent>
+                </div>
+              )}
 
-              <TabsContent value="signup">
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>I am a</Label>
-                    <Select value={signupRole} onValueChange={(v) => setSignupRole(v as SignupRole)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(Object.keys(roleLabels) as SignupRole[]).map((r) => (
-                          <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {signupRole !== "student" && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <ShieldCheck className="h-3 w-3" /> {roleLabels[signupRole]} access requires admin approval
-                      </p>
-                    )}
-                  </div>
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                  <input id="signup-email" type="email" placeholder="you@university.edu" className={`${inputClass} pl-10`} value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
+                </div>
+              </div>
 
-                  {colleges.length > 0 && (
-                    <div className="space-y-2">
-                      <Label>College</Label>
-                      <Select value={selectedCollegeId} onValueChange={setSelectedCollegeId}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your college" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {colleges.map((c: any) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              <span className="flex items-center gap-2">
-                                <Building2 className="h-3 w-3" /> {c.name} ({c.code})
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
+              {/* Password */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#bac9cc" }}>Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#849396" }} />
+                  <input id="signup-password" type="password" placeholder="Min 6 characters" className={`${inputClass} pl-10`} value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required minLength={6} />
+                </div>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-name"
-                        type="text"
-                        placeholder="Your full name"
-                        className="pl-10"
-                        value={signupName}
-                        onChange={(e) => setSignupName(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
+              <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-sm font-bold" style={{ borderRadius: "0.75rem" }}>
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Creating account...</> : "Create Account"}
+              </button>
+            </form>
+          )}
+        </div>
 
-                  {signupRole === "student" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-student-id">Student ID</Label>
-                      <div className="relative">
-                        <IdCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="signup-student-id"
-                          type="text"
-                          placeholder="e.g. BCA2024001"
-                          className="pl-10 uppercase"
-                          value={studentId}
-                          onChange={(e) => setStudentId(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        placeholder="you@university.edu"
-                        className="pl-10"
-                        value={signupEmail}
-                        onChange={(e) => setSignupEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-password"
-                        type="password"
-                        placeholder="Min 6 characters"
-                        className="pl-10"
-                        value={signupPassword}
-                        onChange={(e) => setSignupPassword(e.target.value)}
-                        required
-                        minLength={6}
-                      />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creating account..." : "Create Account"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          <Link to="/" className="inline-flex items-center gap-1 hover:text-foreground transition-colors">
+        <p className="mt-5 text-center text-sm" style={{ color: "#849396" }}>
+          <Link to="/" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
             <ArrowLeft className="h-3 w-3" /> Back to home
           </Link>
         </p>

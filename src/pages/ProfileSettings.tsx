@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { ArrowLeft, Camera, Save, User, Mail, Phone, Shield, Loader2 } from "lucide-react";
+import { ArrowLeft, Camera, Save, User, Mail, Phone, Shield, Loader2, Sparkles } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const ProfileSettings = () => {
@@ -98,7 +98,7 @@ const ProfileSettings = () => {
 
   if (loading || profileLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-[#041329]">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
@@ -114,23 +114,29 @@ const ProfileSettings = () => {
     .slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="container flex h-14 items-center gap-3">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "radial-gradient(circle at 50% 0%, #112036 0%, #041329 70%)" }}>
+      {/* Decorative radial glows */}
+      <div className="bg-glow-blob bg-glow-cyan top-0 left-1/4 w-[400px] h-[400px] opacity-[0.06]" />
+
+      <header className="sticky top-0 z-50 glass-nav">
+        <div className="container flex h-14 items-center gap-3 px-4">
+          <Link to="/dashboard" className="text-muted-foreground hover:text-primary">
+            <Button variant="ghost" size="icon" className="hover:bg-white/5"><ArrowLeft className="h-4 w-4" /></Button>
           </Link>
           <img src={logo} alt="Logo" className="h-7 w-7 rounded" />
-          <h1 className="font-display text-lg font-bold">Profile Settings</h1>
+          <h1 className="font-display text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+            <User className="h-4 w-4 text-primary" />
+            PROFILE CONFIG
+          </h1>
         </div>
       </header>
 
-      <main className="container max-w-2xl py-8 space-y-6">
+      <main className="container max-w-2xl px-4 py-8 space-y-6 relative z-10 page-enter">
         {/* Avatar Section */}
-        <Card className="border-primary/20">
+        <Card className="glass-card bg-card/40 border-white/5 shadow-lg">
           <CardContent className="flex flex-col items-center gap-4 pt-8 pb-6">
             <div className="relative group">
-              <Avatar className="h-24 w-24 border-4 border-primary/20 shadow-lg">
+              <Avatar className="h-24 w-24 border-4 border-primary/20 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]">
                 <AvatarImage src={profile?.avatar_url || undefined} />
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
                   {initials}
@@ -138,7 +144,7 @@ const ProfileSettings = () => {
               </Avatar>
               <label
                 htmlFor="avatar-upload"
-                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               >
                 {uploading ? (
                   <Loader2 className="h-6 w-6 text-white animate-spin" />
@@ -155,14 +161,14 @@ const ProfileSettings = () => {
                 disabled={uploading}
               />
             </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-foreground">{profile?.full_name || "User"}</h2>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+            <div className="text-center space-y-1">
+              <h2 className="text-xl font-bold font-display text-white">{profile?.full_name || "Guest User"}</h2>
+              <p className="text-xs font-mono text-muted-foreground">{user.email}</p>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-1.5 justify-center pt-1">
               {roles.map((r) => (
-                <Badge key={r} variant="secondary" className="capitalize">
-                  <Shield className="h-3 w-3 mr-1" /> {r.replace("_", " ")}
+                <Badge key={r} className="bg-primary/10 text-primary border border-primary/20 text-[10px] font-mono tracking-wider uppercase gap-1 py-0.5">
+                  <Shield className="h-3 w-3" /> {r.replace("_", " ")}
                 </Badge>
               ))}
             </div>
@@ -170,16 +176,16 @@ const ProfileSettings = () => {
         </Card>
 
         {/* Profile Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="h-5 w-5 text-primary" /> Personal Information
+        <Card className="glass-card bg-card/45 border-white/5 shadow-lg">
+          <CardHeader className="border-b border-white/5 pb-4">
+            <CardTitle className="flex items-center gap-2 text-base font-bold text-white uppercase tracking-wider font-mono">
+              <Sparkles className="h-4.5 w-4.5 text-primary" /> Personal Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-5 pt-5">
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-muted-foreground" /> Full Name
+              <Label htmlFor="fullName" className="flex items-center gap-1.5 text-xs text-muted-foreground uppercase font-mono tracking-wide">
+                Full Name
               </Label>
               <Input
                 id="fullName"
@@ -187,20 +193,21 @@ const ProfileSettings = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
                 maxLength={100}
+                className="bg-white/5 border-white/10 text-white rounded-lg focus-visible:ring-primary focus-visible:ring-1"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Email
+              <Label className="flex items-center gap-1.5 text-xs text-muted-foreground uppercase font-mono tracking-wide">
+                Email Address
               </Label>
-              <Input value={user.email || ""} disabled className="bg-muted" />
-              <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+              <Input value={user.email || ""} disabled className="bg-white/5 border-white/5 text-muted-foreground rounded-lg cursor-not-allowed" />
+              <p className="text-[10px] font-mono text-muted-foreground/60 uppercase">Enrolled login email is read-only</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone" className="flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5 text-muted-foreground" /> Phone Number
+              <Label htmlFor="phone" className="flex items-center gap-1.5 text-xs text-muted-foreground uppercase font-mono tracking-wide">
+                Phone Number
               </Label>
               <Input
                 id="phone"
@@ -208,31 +215,32 @@ const ProfileSettings = () => {
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+91 98765 43210"
                 maxLength={15}
+                className="bg-white/5 border-white/10 text-white rounded-lg focus-visible:ring-primary focus-visible:ring-1"
               />
             </div>
 
             {profile?.student_id && (
               <div className="space-y-2">
-                <Label className="flex items-center gap-1.5">
-                  <Shield className="h-3.5 w-3.5 text-muted-foreground" /> Student ID
+                <Label className="flex items-center gap-1.5 text-xs text-muted-foreground uppercase font-mono tracking-wide">
+                  Student Enrolment ID
                 </Label>
-                <Input value={profile.student_id} disabled className="bg-muted" />
+                <Input value={profile.student_id} disabled className="bg-white/5 border-white/5 text-muted-foreground rounded-lg cursor-not-allowed" />
               </div>
             )}
 
-            <Separator />
+            <Separator className="bg-white/5" />
 
             <Button
               onClick={() => updateMutation.mutate()}
               disabled={updateMutation.isPending}
-              className="w-full gap-2"
+              className="w-full btn-primary h-11 flex items-center justify-center gap-2"
             >
               {updateMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
               ) : (
-                <Save className="h-4 w-4" />
+                <Save className="h-4 w-4 text-primary-foreground" />
               )}
-              Save Changes
+              SAVE PROFILE REVISIONS
             </Button>
           </CardContent>
         </Card>

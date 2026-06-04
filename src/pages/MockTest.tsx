@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
   ArrowLeft, Clock, CheckCircle2, XCircle, ArrowRight, Flag,
-  AlertTriangle, SkipForward, BarChart3, BookOpen,
+  AlertTriangle, SkipForward, BarChart3, BookOpen, Sparkles
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -69,6 +69,43 @@ const MockTest = () => {
     loadQuiz();
   }, [loadQuiz]);
 
+  const submitTest = useCallback(async () => {
+    if (!quiz || phase === "result" || submitting) return;
+    setSubmitting(true);
+
+    let totalScore = 0;
+
+    for (const q of questions) {
+      const userAns = answers[q.id];
+      if (q.question_type === "theory") {
+        continue;
+      }
+      if (userAns === q.correct_answer) {
+        totalScore += q.marks;
+      } else if (userAns && quiz.negative_marking) {
+        totalScore -= quiz.negative_mark_value;
+      }
+    }
+
+    setScore(totalScore);
+    setPhase("result");
+
+    if (user) {
+      await supabase.from("quiz_attempts").insert({
+        quiz_id: quiz.id,
+        user_id: user.id,
+        answers,
+        score: totalScore,
+        total_marks: quiz.total_marks,
+        is_completed: true,
+        completed_at: new Date().toISOString(),
+      });
+    }
+
+    setSubmitting(false);
+    toast.success("Test submitted!");
+  }, [quiz, questions, answers, phase, user, submitting]);
+
   const startTest = () => {
     if (!quiz) return;
     setTimeLeft(quiz.duration_minutes * 60);
@@ -86,7 +123,6 @@ const MockTest = () => {
           submitTest();
           return 0;
         }
-        // Warn at 5 min and 1 min
         if (prev === 300) toast.warning("5 minutes remaining!");
         if (prev === 60) toast.error("1 minute remaining!");
         return prev - 1;
@@ -109,10 +145,10 @@ const MockTest = () => {
   };
 
   const statusColors: Record<QuestionStatus, string> = {
-    answered: "bg-primary text-primary-foreground",
-    skipped: "bg-destructive/20 text-destructive",
-    flagged: "bg-amber-500 text-white",
-    unanswered: "bg-muted text-muted-foreground",
+    answered: "bg-primary/20 text-primary border-primary/45",
+    skipped: "bg-destructive/15 text-destructive border-destructive/30",
+    flagged: "bg-amber-500/20 text-amber-400 border-amber-500/40",
+    unanswered: "bg-white/5 text-muted-foreground border-white/5",
   };
 
   const goTo = (idx: number) => {
@@ -140,7 +176,6 @@ const MockTest = () => {
     setAnswers(prev => { const next = { ...prev }; delete next[qId]; return next; });
   };
 
-  // Stats
   const stats = useMemo(() => {
     const answered = questions.filter(q => answers[q.id]).length;
     const flaggedCount = flagged.size;
@@ -149,51 +184,6 @@ const MockTest = () => {
     return { answered, flaggedCount, skipped, unanswered };
   }, [questions, answers, flagged, visited]);
 
-  const submitTest = useCallback(async () => {
-    if (!quiz || phase === "result" || submitting) return;
-    setSubmitting(true);
-
-    let totalScore = 0;
-    const questionResults: Record<string, { correct: boolean; marks: number }> = {};
-
-    for (const q of questions) {
-      const userAns = answers[q.id];
-      if (q.question_type === "theory") {
-        // Theory questions need manual grading — award 0 for now
-        questionResults[q.id] = { correct: false, marks: 0 };
-        continue;
-      }
-      if (userAns === q.correct_answer) {
-        totalScore += q.marks;
-        questionResults[q.id] = { correct: true, marks: q.marks };
-      } else if (userAns && quiz.negative_marking) {
-        totalScore -= quiz.negative_mark_value;
-        questionResults[q.id] = { correct: false, marks: -quiz.negative_mark_value };
-      } else {
-        questionResults[q.id] = { correct: false, marks: 0 };
-      }
-    }
-
-    setScore(totalScore);
-    setPhase("result");
-
-    if (user) {
-      await supabase.from("quiz_attempts").insert({
-        quiz_id: quiz.id,
-        user_id: user.id,
-        answers,
-        score: totalScore,
-        total_marks: quiz.total_marks,
-        is_completed: true,
-        completed_at: new Date().toISOString(),
-      });
-    }
-
-    setSubmitting(false);
-    toast.success("Test submitted!");
-  }, [quiz, questions, answers, phase, user, submitting]);
-
-  // Result analytics
   const resultAnalytics = useMemo(() => {
     if (phase !== "result") return null;
     const correct = questions.filter(q => answers[q.id] === q.correct_answer).length;
@@ -207,10 +197,10 @@ const MockTest = () => {
 
   if (phase === "loading") {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container py-8 space-y-4">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-48 w-full rounded-xl" />
+      <div className="min-h-screen bg-[#041329] flex items-center justify-center">
+        <div className="container max-w-2xl py-8 space-y-4">
+          <Skeleton className="h-10 w-64 bg-white/5" />
+          <Skeleton className="h-48 w-full rounded-xl bg-white/5" />
         </div>
       </div>
     );
@@ -218,8 +208,8 @@ const MockTest = () => {
 
   if (!quiz) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Quiz not found.</p>
+      <div className="flex min-h-screen bg-[#041329] items-center justify-center">
+        <p className="text-muted-foreground font-mono">QUIZ NOT FOUND.</p>
       </div>
     );
   }
@@ -229,94 +219,79 @@ const MockTest = () => {
   const hasTheory = questions.some(q => q.question_type === "theory");
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center justify-between">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "radial-gradient(circle at 50% 0%, #112036 0%, #041329 70%)" }}>
+      <div className="bg-glow-blob bg-glow-cyan top-0 left-1/4 w-[400px] h-[400px] opacity-[0.06]" />
+
+      <header className="sticky top-0 z-50 glass-nav">
+        <div className="container flex h-14 items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-primary">
               <Link to="/quizzes"><ArrowLeft className="h-4 w-4" /></Link>
             </Button>
             <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
-            <span className="font-display text-base font-bold hidden sm:inline">Learn<span className="text-primary">Path</span></span>
+            <span className="font-display text-sm font-bold tracking-tight text-white hidden sm:inline">LEARNPATH ASSESSMENT</span>
           </div>
           {phase === "active" && (
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-primary" />{stats.answered}</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{stats.flaggedCount}</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive/40" />{stats.skipped}</span>
+              <div className="hidden md:flex items-center gap-3 text-xs font-mono text-muted-foreground uppercase">
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-primary" />{stats.answered} ANS</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{stats.flaggedCount} FLG</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive/60" />{stats.skipped} SKP</span>
               </div>
-              <Badge variant={timeLeft < 60 ? "destructive" : timeLeft < 300 ? "secondary" : "outline"} className="gap-1.5 text-sm px-3 py-1 font-mono">
-                <Clock className="h-3.5 w-3.5" /> {formatTime(timeLeft)}
+              <Badge variant={timeLeft < 60 ? "destructive" : timeLeft < 300 ? "secondary" : "outline"} className="gap-1.5 text-sm px-3.5 py-1.5 font-mono border-white/10 shadow-lg">
+                <Clock className="h-4 w-4 text-primary animate-pulse" /> {formatTime(timeLeft)}
               </Badge>
             </div>
           )}
         </div>
       </header>
 
-      <main className="container max-w-3xl py-6">
+      <main className="container max-w-3xl px-4 py-8 relative z-10 page-enter">
         {/* INTRO */}
         {phase === "intro" && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2 mb-1">
-                <Badge variant="outline">{quiz.quiz_type === "semester_exam" ? "Semester Exam" : quiz.quiz_type === "unit_quiz" ? "Unit Quiz" : "Practice"}</Badge>
+          <Card className="glass-card bg-card/45 border-white/5">
+            <CardHeader className="border-b border-white/5 pb-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Badge className="badge-cyan text-[10px] tracking-wider uppercase">{quiz.quiz_type.replace("_", " ")}</Badge>
               </div>
-              <CardTitle className="font-display text-2xl">{quiz.title}</CardTitle>
+              <CardTitle className="font-display text-2xl font-extrabold text-white leading-tight">{quiz.title}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {quiz.description && <p className="text-muted-foreground">{quiz.description}</p>}
+            <CardContent className="space-y-6 pt-5">
+              {quiz.description && <p className="text-muted-foreground text-sm leading-relaxed">{quiz.description}</p>}
+              
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                <div className="rounded-lg border p-3 text-center">
-                  <span className="text-muted-foreground block text-xs">Questions</span>
-                  <p className="font-bold text-foreground text-lg">{questions.length}</p>
+                <div className="rounded-xl glass-card bg-white/5 border-white/5 p-4 text-center">
+                  <span className="text-muted-foreground block text-xs uppercase font-mono tracking-wider">Questions</span>
+                  <p className="font-extrabold text-white text-xl mt-1">{questions.length}</p>
                 </div>
-                <div className="rounded-lg border p-3 text-center">
-                  <span className="text-muted-foreground block text-xs">Duration</span>
-                  <p className="font-bold text-foreground text-lg">{quiz.duration_minutes} min</p>
+                <div className="rounded-xl glass-card bg-white/5 border-white/5 p-4 text-center">
+                  <span className="text-muted-foreground block text-xs uppercase font-mono tracking-wider">Duration</span>
+                  <p className="font-extrabold text-white text-xl mt-1">{quiz.duration_minutes} Mins</p>
                 </div>
-                <div className="rounded-lg border p-3 text-center">
-                  <span className="text-muted-foreground block text-xs">Total Marks</span>
-                  <p className="font-bold text-foreground text-lg">{quiz.total_marks}</p>
+                <div className="rounded-xl glass-card bg-white/5 border-white/5 p-4 text-center">
+                  <span className="text-muted-foreground block text-xs uppercase font-mono tracking-wider">Total Marks</span>
+                  <p className="font-extrabold text-white text-xl mt-1">{quiz.total_marks}</p>
                 </div>
-                <div className="rounded-lg border p-3 text-center">
-                  <span className="text-muted-foreground block text-xs">Negative</span>
-                  <p className="font-bold text-foreground text-lg">{quiz.negative_marking ? `−${quiz.negative_mark_value}` : "No"}</p>
-                </div>
-              </div>
-
-              {/* Question type breakdown */}
-              <div className="rounded-lg bg-muted/50 p-4 space-y-2">
-                <p className="text-sm font-medium text-foreground">Question Types</p>
-                <div className="flex flex-wrap gap-2">
-                  {["mcq", "numerical", "theory"].map(type => {
-                    const count = questions.filter(q => q.question_type === type).length;
-                    if (!count) return null;
-                    return (
-                      <Badge key={type} variant="secondary" className="gap-1">
-                        {type === "mcq" ? "MCQ" : type === "numerical" ? "Numerical" : "Theory"}: {count}
-                      </Badge>
-                    );
-                  })}
+                <div className="rounded-xl glass-card bg-white/5 border-white/5 p-4 text-center">
+                  <span className="text-muted-foreground block text-xs uppercase font-mono tracking-wider">Negative</span>
+                  <p className="font-extrabold text-white text-xl mt-1">{quiz.negative_marking ? `−${quiz.negative_mark_value}` : "OFF"}</p>
                 </div>
               </div>
 
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-foreground">Instructions</p>
-                  <ul className="mt-1 text-muted-foreground space-y-1">
-                    <li>• Test will auto-submit when time runs out</li>
-                    <li>• You can flag questions to review later</li>
-                    <li>• Use the question navigator to jump between questions</li>
-                    {quiz.negative_marking && <li>• Wrong MCQ/numerical answers will deduct {quiz.negative_mark_value} marks</li>}
-                    {hasTheory && <li>• Theory answers will be graded manually by faculty</li>}
+              <div className="rounded-xl bg-white/5 border border-white/5 p-4 flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs space-y-1">
+                  <p className="font-bold text-white uppercase tracking-wider font-mono">Assigned Rules</p>
+                  <ul className="text-muted-foreground list-disc pl-3 space-y-1 leading-relaxed">
+                    <li>Tests automatically lock and compile when countdown completes.</li>
+                    <li>MCQ wrong items trigger negative point deduction: {quiz.negative_marking ? `-${quiz.negative_mark_value}` : "No negative penalty"}.</li>
+                    {hasTheory && <li>Subjective theory questions undergo manual review.</li>}
                   </ul>
                 </div>
               </div>
 
-              <Button onClick={startTest} size="lg" className="w-full gap-2 mt-4">
-                Start Test <ArrowRight className="h-4 w-4" />
+              <Button onClick={startTest} className="w-full btn-primary h-11 flex items-center justify-center gap-2">
+                START ASSESSMENT <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
@@ -325,32 +300,36 @@ const MockTest = () => {
         {/* ACTIVE TEST */}
         {phase === "active" && q && (
           <div className="space-y-4">
-            <Progress value={progress} className="h-2" />
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Question {current + 1} of {questions.length}</span>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">{q.question_type === "mcq" ? "MCQ" : q.question_type === "numerical" ? "Numerical" : "Theory"}</Badge>
-                <Badge variant="secondary">{q.marks} mark{q.marks > 1 ? "s" : ""}</Badge>
+            <div className="space-y-2">
+              <Progress value={progress} className="h-1.5 bg-white/5" />
+              <div className="flex items-center justify-between text-xs font-mono text-muted-foreground">
+                <span>QUESTION {current + 1} OF {questions.length}</span>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] py-0 border-white/10 uppercase">{q.question_type}</Badge>
+                  <Badge className="badge-cyan text-[10px] py-0">{q.marks} MARKS</Badge>
+                </div>
               </div>
             </div>
 
-            <Card>
+            <Card className="glass-card bg-card/40 border-white/5">
               <CardContent className="p-6">
-                <p className="text-lg font-medium text-foreground mb-6 whitespace-pre-wrap">{q.question_text}</p>
+                <p className="text-lg font-bold text-white leading-relaxed mb-6 whitespace-pre-wrap">{q.question_text}</p>
 
                 {q.question_type === "mcq" && (
                   <RadioGroup value={answers[q.id] || ""} onValueChange={(v) => setAnswers(prev => ({ ...prev, [q.id]: v }))}>
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                       {q.options.map((opt, i) => (
                         <Label
                           key={i}
                           htmlFor={`opt-${i}`}
-                          className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer transition-colors ${
-                            answers[q.id] === opt ? "border-primary bg-primary/5" : "hover:bg-muted/50"
+                          className={`flex items-center gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200 ${
+                            answers[q.id] === opt 
+                              ? "border-primary bg-primary/10 shadow-[0_0_12px_rgba(0,229,255,0.1)]" 
+                              : "border-white/5 bg-white/5 hover:bg-white/10"
                           }`}
                         >
-                          <RadioGroupItem value={opt} id={`opt-${i}`} />
-                          <span className="text-foreground">{opt}</span>
+                          <RadioGroupItem value={opt} id={`opt-${i}`} className="border-white/30 text-primary focus-visible:ring-primary" />
+                          <span className="text-white text-sm font-medium leading-none">{opt}</span>
                         </Label>
                       ))}
                     </div>
@@ -363,48 +342,48 @@ const MockTest = () => {
                     placeholder="Enter your numerical answer"
                     value={answers[q.id] || ""}
                     onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
-                    className="text-lg"
+                    className="text-base h-11 bg-white/5 border-white/10 text-white rounded-lg focus-visible:ring-primary focus-visible:ring-1"
                   />
                 )}
 
                 {q.question_type === "theory" && (
                   <Textarea
-                    placeholder="Write your answer here..."
+                    placeholder="Provide your text answer here..."
                     value={answers[q.id] || ""}
                     onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
                     rows={8}
-                    className="text-base"
+                    className="text-sm bg-white/5 border-white/10 text-white rounded-lg leading-relaxed focus-visible:ring-primary"
                   />
                 )}
               </CardContent>
             </Card>
 
             {/* Action buttons */}
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => goTo(Math.max(0, current - 1))} disabled={current === 0}>
-                  <ArrowLeft className="h-4 w-4 mr-1" /> Prev
+                <Button variant="outline" size="sm" onClick={() => goTo(Math.max(0, current - 1))} disabled={current === 0} className="border-white/10 text-white hover:bg-white/10">
+                  <ArrowLeft className="h-4 w-4 mr-1.5" /> Back
                 </Button>
-                <Button variant="outline" size="sm" onClick={clearAnswer} disabled={!answers[q.id]}>
-                  Clear
+                <Button variant="ghost" size="sm" onClick={clearAnswer} disabled={!answers[q.id]} className="text-muted-foreground hover:text-white">
+                  Reset
                 </Button>
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant={flagged.has(q.id) ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={toggleFlag}
-                  className={`gap-1 ${flagged.has(q.id) ? "bg-amber-500 hover:bg-amber-600" : ""}`}
+                  className={`gap-1.5 border-white/10 ${flagged.has(q.id) ? "bg-amber-500/20 text-amber-400 border-amber-500/35 hover:bg-amber-500/30" : "text-white hover:bg-white/10"}`}
                 >
-                  <Flag className="h-3.5 w-3.5" /> {flagged.has(q.id) ? "Flagged" : "Flag"}
+                  <Flag className="h-4 w-4" /> {flagged.has(q.id) ? "Flagged" : "Flag"}
                 </Button>
                 {current < questions.length - 1 ? (
-                  <Button size="sm" onClick={() => goTo(current + 1)}>
-                    Next <ArrowRight className="h-4 w-4 ml-1" />
+                  <Button size="sm" onClick={() => goTo(current + 1)} className="bg-primary text-primary-foreground hover:opacity-90 font-semibold rounded-lg">
+                    Next <ArrowRight className="h-4 w-4 ml-1.5" />
                   </Button>
                 ) : (
-                  <Button size="sm" onClick={() => setShowConfirm(true)} variant="destructive" className="gap-1">
-                    <Flag className="h-3.5 w-3.5" /> Finish
+                  <Button size="sm" onClick={() => setShowConfirm(true)} variant="destructive" className="gap-1.5 rounded-lg font-semibold">
+                    <Flag className="h-4 w-4" /> FINISH TEST
                   </Button>
                 )}
               </div>
@@ -412,45 +391,40 @@ const MockTest = () => {
 
             {/* Submit confirmation */}
             {showConfirm && (
-              <Card className="border-destructive/30 bg-destructive/5">
-                <CardContent className="p-4 space-y-3">
-                  <p className="font-medium text-foreground">Submit Test?</p>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-primary" /> Answered: {stats.answered}</div>
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Flagged: {stats.flaggedCount}</div>
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-destructive/40" /> Skipped: {stats.skipped}</div>
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" /> Not visited: {stats.unanswered}</div>
+              <Card className="border-destructive/35 bg-destructive/10 glass-card">
+                <CardContent className="p-5 space-y-4">
+                  <div>
+                    <h3 className="font-bold text-white text-base">Submit Assessment?</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Please review your question coverage before confirmation:</p>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                    <div className="flex items-center gap-1.5 text-primary"><span className="h-2 w-2 rounded-full bg-primary" /> {stats.answered} ANS</div>
+                    <div className="flex items-center gap-1.5 text-amber-400"><span className="h-2 w-2 rounded-full bg-amber-500" /> {stats.flaggedCount} FLG</div>
+                    <div className="flex items-center gap-1.5 text-destructive"><span className="h-2 w-2 rounded-full bg-destructive/60" /> {stats.skipped} SKP</div>
+                    <div className="flex items-center gap-1.5 text-muted-foreground"><span className="h-2 w-2 rounded-full bg-white/10" /> {stats.unanswered} UNV</div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setShowConfirm(false)} className="flex-1">Go Back</Button>
+                    <Button variant="outline" size="sm" onClick={() => setShowConfirm(false)} className="flex-1 border-white/10 text-white">Review Test</Button>
                     <Button variant="destructive" size="sm" onClick={submitTest} disabled={submitting} className="flex-1">
-                      {submitting ? "Submitting..." : "Confirm Submit"}
+                      {submitting ? "Submitting..." : "Confirm & Submit"}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Question navigator panel */}
-            <Card>
+            {/* Navigator Panel */}
+            <Card className="glass-card bg-card/35 border-white/5">
               <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-medium text-foreground">Question Navigator</p>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-primary" /> Answered</span>
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" /> Flagged</span>
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive/40" /> Skipped</span>
-                  </div>
-                </div>
+                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-3">Navigator Grid</p>
                 <div className="flex flex-wrap gap-2">
                   {questions.map((qu, i) => {
                     const status = getStatus(qu.id);
                     return (
                       <Button
                         key={qu.id}
-                        size="icon"
                         variant="outline"
-                        className={`h-9 w-9 text-xs font-medium ${statusColors[status]} ${i === current ? "ring-2 ring-offset-1 ring-primary" : ""}`}
+                        className={`h-9 w-9 text-xs font-mono font-bold rounded-lg border transition-all ${statusColors[status]} ${i === current ? "ring-2 ring-primary ring-offset-1 ring-offset-[#041329]" : ""}`}
                         onClick={() => goTo(i)}
                       >
                         {i + 1}
@@ -467,99 +441,95 @@ const MockTest = () => {
         {phase === "result" && resultAnalytics && (
           <div className="space-y-6">
             {/* Score card */}
-            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardContent className="flex flex-col items-center p-8">
-                <p className="text-sm font-medium text-muted-foreground">Your Score</p>
-                <p className="font-display text-5xl font-bold text-primary mt-1">{score?.toFixed(1)}</p>
-                <p className="text-muted-foreground">out of {quiz.total_marks}</p>
-                <Progress value={resultAnalytics.percentage} className="h-3 w-48 mt-4" />
-                <p className="text-sm font-medium text-foreground mt-2">{resultAnalytics.percentage}%</p>
+            <Card className="glass-card bg-primary/10 border-primary/20 shadow-lg text-center p-8">
+              <CardContent className="p-0 flex flex-col items-center">
+                <p className="text-xs font-mono text-primary uppercase tracking-wider">COMPILATION COMPLETE</p>
+                <h3 className="font-display text-5xl font-extrabold text-white mt-3 tracking-tighter">
+                  {score?.toFixed(1)} <span className="text-lg text-muted-foreground">/ {quiz.total_marks}</span>
+                </h3>
+                <Progress value={resultAnalytics.percentage} className="h-2 w-48 mt-5 bg-white/5" />
+                <p className="text-xs font-mono text-muted-foreground mt-2 uppercase">{resultAnalytics.percentage}% ACCURACY RATING</p>
               </CardContent>
             </Card>
 
             {/* Analytics grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary mx-auto mb-1" />
-                  <p className="text-2xl font-bold text-foreground">{resultAnalytics.correct}</p>
-                  <p className="text-xs text-muted-foreground">Correct</p>
-                </CardContent>
+              <Card className="glass-card border-white/5 bg-white/5 p-4 text-center">
+                <CheckCircle2 className="h-5 w-5 text-primary mx-auto mb-1.5" />
+                <p className="text-2xl font-extrabold text-white">{resultAnalytics.correct}</p>
+                <p className="text-xs font-mono text-muted-foreground uppercase">CORRECT</p>
               </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <XCircle className="h-5 w-5 text-destructive mx-auto mb-1" />
-                  <p className="text-2xl font-bold text-foreground">{resultAnalytics.wrong}</p>
-                  <p className="text-xs text-muted-foreground">Wrong</p>
-                </CardContent>
+              <Card className="glass-card border-white/5 bg-white/5 p-4 text-center">
+                <XCircle className="h-5 w-5 text-destructive mx-auto mb-1.5" />
+                <p className="text-2xl font-extrabold text-white">{resultAnalytics.wrong}</p>
+                <p className="text-xs font-mono text-muted-foreground uppercase">WRONG</p>
               </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <SkipForward className="h-5 w-5 text-muted-foreground mx-auto mb-1" />
-                  <p className="text-2xl font-bold text-foreground">{resultAnalytics.unanswered}</p>
-                  <p className="text-xs text-muted-foreground">Unanswered</p>
-                </CardContent>
+              <Card className="glass-card border-white/5 bg-white/5 p-4 text-center">
+                <SkipForward className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                <p className="text-2xl font-extrabold text-white">{resultAnalytics.unanswered}</p>
+                <p className="text-xs font-mono text-muted-foreground uppercase">UNANSWERED</p>
               </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <BarChart3 className="h-5 w-5 text-amber-500 mx-auto mb-1" />
-                  <p className="text-2xl font-bold text-foreground">{resultAnalytics.accuracy}%</p>
-                  <p className="text-xs text-muted-foreground">Accuracy</p>
-                </CardContent>
+              <Card className="glass-card border-white/5 bg-white/5 p-4 text-center">
+                <BarChart3 className="h-5 w-5 text-amber-400 mx-auto mb-1.5" />
+                <p className="text-2xl font-extrabold text-white">{resultAnalytics.accuracy}%</p>
+                <p className="text-xs font-mono text-muted-foreground uppercase">ACCURACY</p>
               </Card>
             </div>
 
             {resultAnalytics.theory > 0 && (
-              <Card className="border-amber-500/30 bg-amber-500/5">
+              <Card className="border-amber-500/25 bg-amber-500/10 glass-card">
                 <CardContent className="p-4 flex items-center gap-3">
-                  <BookOpen className="h-5 w-5 text-amber-500" />
-                  <p className="text-sm text-foreground">
-                    <strong>{resultAnalytics.theory} theory question(s)</strong> will be graded manually by faculty. Your final score may change.
+                  <BookOpen className="h-5 w-5 text-amber-400" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    <strong className="text-white">{resultAnalytics.theory} subjective question(s)</strong> require manual grading parameters. Score will reflect revisions upon examiner confirmation.
                   </p>
                 </CardContent>
               </Card>
             )}
 
-            <Button variant="outline" onClick={() => setShowExplanations(!showExplanations)} className="w-full">
-              {showExplanations ? "Hide" : "Show"} Detailed Solutions
+            <Button variant="outline" onClick={() => setShowExplanations(!showExplanations)} className="w-full border-white/10 text-white hover:bg-white/10 font-bold uppercase tracking-wider text-xs h-11">
+              {showExplanations ? "HIDE SOLUTIONS" : "VIEW DETAILED SOLUTIONS"}
             </Button>
 
             {showExplanations && (
               <div className="space-y-4">
-                {questions.map((q, i) => {
-                  const userAns = answers[q.id];
-                  const isCorrect = q.question_type !== "theory" && userAns === q.correct_answer;
-                  const isWrong = q.question_type !== "theory" && userAns && userAns !== q.correct_answer;
+                {questions.map((qu, i) => {
+                  const userAns = answers[qu.id];
+                  const isCorrect = qu.question_type !== "theory" && userAns === qu.correct_answer;
+                  const isWrong = qu.question_type !== "theory" && userAns && userAns !== qu.correct_answer;
                   return (
-                    <Card key={q.id} className={isCorrect ? "border-primary/30" : isWrong ? "border-destructive/30" : ""}>
-                      <CardContent className="p-4 space-y-2">
-                        <div className="flex items-start gap-2">
-                          <Badge variant="outline" className="shrink-0 mt-0.5">Q{i + 1}</Badge>
+                    <Card key={qu.id} className={`glass-card bg-card/30 border-white/5 ${isCorrect ? "border-emerald-500/30" : isWrong ? "border-destructive/30" : ""}`}>
+                      <CardContent className="p-5 space-y-3">
+                        <div className="flex items-start gap-2.5">
+                          <Badge variant="outline" className="shrink-0 font-mono border-white/10 mt-0.5">Q{i + 1}</Badge>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-foreground whitespace-pre-wrap">{q.question_text}</p>
-                            <Badge variant="secondary" className="mt-1 text-xs">{q.marks} mark{q.marks > 1 ? "s" : ""} · {q.question_type.toUpperCase()}</Badge>
+                            <p className="text-sm font-semibold text-white leading-relaxed whitespace-pre-wrap">{qu.question_text}</p>
+                            <div className="flex gap-2 mt-2">
+                              <Badge className="bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider font-mono py-0">{qu.marks} MARKS</Badge>
+                              <Badge className="bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider font-mono py-0">{qu.question_type}</Badge>
+                            </div>
                           </div>
-                          {isCorrect && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+                          {isCorrect && <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />}
                           {isWrong && <XCircle className="h-5 w-5 text-destructive shrink-0" />}
                         </div>
-                        <div className="ml-10 text-sm space-y-1">
-                          {q.question_type !== "theory" && (
-                            <p className="text-primary flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Correct: {q.correct_answer}</p>
+                        <div className="ml-10 text-xs font-medium space-y-1.5">
+                          {qu.question_type !== "theory" && (
+                            <p className="text-emerald-400 flex items-center gap-1.5 font-mono"><CheckCircle2 className="h-3.5 w-3.5" /> CORRECT OPTION: {qu.correct_answer}</p>
                           )}
-                          {userAns && !isCorrect && q.question_type !== "theory" && (
-                            <p className="text-destructive flex items-center gap-1"><XCircle className="h-3 w-3" /> Your answer: {userAns}</p>
+                          {userAns && !isCorrect && qu.question_type !== "theory" && (
+                            <p className="text-destructive flex items-center gap-1.5 font-mono"><XCircle className="h-3.5 w-3.5" /> CHOSEN OPTION: {userAns}</p>
                           )}
-                          {q.question_type === "theory" && userAns && (
-                            <div className="bg-muted/50 rounded p-2 text-muted-foreground text-xs">
-                              <p className="font-medium mb-1">Your answer:</p>
-                              <p className="whitespace-pre-wrap">{userAns}</p>
+                          {qu.question_type === "theory" && userAns && (
+                            <div className="bg-white/5 rounded-xl border border-white/5 p-3 text-muted-foreground space-y-1">
+                              <p className="font-bold text-white font-mono uppercase tracking-wider text-[10px]">Your Answer:</p>
+                              <p className="whitespace-pre-wrap text-xs leading-relaxed">{userAns}</p>
                             </div>
                           )}
-                          {!userAns && <p className="text-muted-foreground">— Not answered</p>}
-                          {q.explanation && (
-                            <div className="mt-2 bg-primary/5 rounded-lg p-3 text-muted-foreground text-sm">
-                              <p className="font-medium text-foreground mb-1">Explanation:</p>
-                              <p>{q.explanation}</p>
+                          {!userAns && <p className="text-muted-foreground font-mono">— QUESTION WAS SKIPPED</p>}
+                          {qu.explanation && (
+                            <div className="mt-3 bg-primary/5 rounded-xl border border-primary/10 p-3 text-muted-foreground leading-relaxed">
+                              <p className="font-bold text-white font-mono uppercase tracking-wider text-[10px] mb-1">Theoretical Explanation:</p>
+                              <p className="text-xs">{qu.explanation}</p>
                             </div>
                           )}
                         </div>
@@ -571,10 +541,10 @@ const MockTest = () => {
             )}
 
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" asChild>
-                <Link to="/quizzes">All Tests</Link>
+              <Button variant="outline" className="flex-1 border-white/10 text-white hover:bg-white/10 font-bold tracking-wider text-xs h-11 uppercase" asChild>
+                <Link to="/quizzes">Back to List</Link>
               </Button>
-              <Button className="flex-1" asChild>
+              <Button className="flex-1 btn-primary font-bold tracking-wider text-xs h-11 uppercase" asChild>
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
             </div>

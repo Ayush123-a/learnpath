@@ -1,8 +1,10 @@
 // Mock authentication for local development without Supabase
 import { User, Session } from "@supabase/supabase-js";
 
-// Always enable mock auth in dev mode or when Supabase is not accessible
-export const MOCK_MODE = import.meta.env.DEV;
+// Only enable mock auth when explicitly opted in via localStorage,
+// NOT automatically in DEV mode — this ensures real Supabase auth is used.
+// Toggle by running: localStorage.setItem('MOCK_AUTH', '1')  or  localStorage.removeItem('MOCK_AUTH')
+export const MOCK_MODE = false; // Never force-enable — real Supabase is always preferred
 
 const MOCK_USER: User = {
   id: "mock-user-123",
@@ -10,9 +12,9 @@ const MOCK_USER: User = {
   role: "authenticated",
   email: "ayushsinghrawat76456@gmail.com",
   email_confirmed_at: new Date().toISOString(),
-  phone: null,
-  phone_confirmed_at: null,
-  phone_change: null,
+  phone: "",
+  phone_confirmed_at: undefined,
+  phone_change: "",
   confirmed_at: new Date().toISOString(),
   last_sign_in_at: new Date().toISOString(),
   app_metadata: {},
@@ -30,9 +32,8 @@ export const MOCK_SESSION: Session = {
   access_token: "mock-access-token",
   refresh_token: "mock-refresh-token",
   expires_in: 3600,
-  expires_at: Date.now() + 3600000,
+  expires_at: Math.floor(Date.now() / 1000) + 3600,
   token_type: "bearer",
-  session_created_at: Date.now(),
   user: MOCK_USER,
 };
 
@@ -45,9 +46,11 @@ export const getMockAuthState = () => ({
   approvalStatus: "approved",
 });
 
-// Enable mock auth in development mode
+import { isMockEnabled } from "./mockDatabase";
+
+// Mock auth is only available when manually enabled via localStorage key
+// This lets developers test offline without breaking real Supabase usage
 export const isMockAuthAvailable = () => {
-  if (typeof window === "undefined") return false;
-  // Check if we're in dev mode
-  return MOCK_MODE;
+  return isMockEnabled();
 };
+

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Plus, Trash2, Calculator } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Calculator, Sparkles } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const gradePoints: Record<string, number> = {
@@ -93,59 +93,65 @@ const GPACalculator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/dashboard"><ArrowLeft className="h-4 w-4" /></Link>
-          </Button>
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
-            <span className="font-display text-base font-bold">Learn<span className="text-primary">Path</span></span>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "radial-gradient(circle at 50% 0%, #112036 0%, #041329 70%)" }}>
+      {/* Decorative glows */}
+      <div className="bg-glow-blob bg-glow-cyan top-0 left-1/4 w-[400px] h-[400px] opacity-[0.06]" />
+
+      <header className="sticky top-0 z-50 glass-nav">
+        <div className="container flex h-14 items-center gap-3 px-4">
+          <Link to="/dashboard" className="text-muted-foreground hover:text-primary">
+            <Button variant="ghost" size="icon" className="hover:bg-white/5"><ArrowLeft className="h-4 w-4" /></Button>
           </Link>
+          <img src={logo} alt="Learn Path" className="h-7 w-7 rounded" />
+          <h1 className="font-display text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+            <Calculator className="h-4 w-4 text-primary" />
+            GPA SOLVER
+          </h1>
         </div>
       </header>
 
-      <main className="container max-w-2xl py-8">
-        <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-            <Calculator className="h-8 w-8 text-primary" />
-            GPA / CGPA Calculator
-          </h1>
-          <p className="mt-2 text-muted-foreground">Enter your grades for each semester to calculate GPA and CGPA.</p>
+      <main className="container max-w-2xl px-4 py-8 relative z-10 page-enter space-y-6">
+        <div className="space-y-1">
+          <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
+            <Calculator className="h-7 w-7 text-primary" />
+            GPA Calculator
+          </h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">Calculate individual semester points and complete CGPA averages instantly.</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {semesters.map((sem, semIdx) => (
-            <Card key={sem.id}>
-              <CardHeader className="pb-3">
+            <Card key={sem.id} className="glass-card bg-card/40 border-white/5 shadow-lg">
+              <CardHeader className="pb-3 border-b border-white/5">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-display">{sem.label}</CardTitle>
-                  <div className="flex items-center gap-2">
+                  <CardTitle className="text-base font-bold font-display text-white">{sem.label}</CardTitle>
+                  <div className="flex items-center gap-3">
                     {sem.gpa !== null && (
-                      <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
+                      <span className="rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-mono font-bold text-primary">
                         GPA: {sem.gpa.toFixed(2)}
                       </span>
                     )}
                     {semesters.length > 1 && (
-                      <Button variant="ghost" size="icon" onClick={() => removeSemester(semIdx)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button variant="ghost" size="icon" onClick={() => removeSemester(semIdx)} className="hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {/* Header */}
-                <div className="grid grid-cols-[1fr_80px_100px_32px] gap-2 text-xs font-medium text-muted-foreground px-1">
-                  <span>Subject</span><span>Credits</span><span>Grade</span><span />
+              <CardContent className="space-y-3.5 pt-4">
+                {/* Header labels */}
+                <div className="grid grid-cols-[1fr_80px_100px_32px] gap-2.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground px-1">
+                  <span>Subject Title</span><span>Credits</span><span>Grade</span><span />
                 </div>
+                
                 {sem.subjects.map((sub, subIdx) => (
-                  <div key={sub.id} className="grid grid-cols-[1fr_80px_100px_32px] gap-2 items-center">
+                  <div key={sub.id} className="grid grid-cols-[1fr_80px_100px_32px] gap-2.5 items-center">
                     <Input
-                      placeholder="Subject name"
+                      placeholder="e.g. Programming in C"
                       value={sub.name}
                       onChange={(e) => updateSubject(semIdx, subIdx, "name", e.target.value)}
+                      className="bg-white/5 border-white/10 text-white rounded-lg focus-visible:ring-primary focus-visible:ring-1 text-sm h-10"
                     />
                     <Input
                       type="number"
@@ -153,45 +159,49 @@ const GPACalculator = () => {
                       max="10"
                       value={sub.credits}
                       onChange={(e) => updateSubject(semIdx, subIdx, "credits", e.target.value)}
+                      className="bg-white/5 border-white/10 text-white rounded-lg focus-visible:ring-primary text-sm h-10 text-center font-mono"
                     />
                     <Select value={sub.grade} onValueChange={(v) => updateSubject(semIdx, subIdx, "grade", v)}>
-                      <SelectTrigger><SelectValue placeholder="Grade" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-lg text-sm h-10">
+                        <SelectValue placeholder="Grade" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card/95 border-white/10 backdrop-blur-xl">
                         {Object.entries(gradePoints).map(([g, p]) => (
-                          <SelectItem key={g} value={g}>{g} ({p})</SelectItem>
+                          <SelectItem key={g} value={g} className="font-mono">{g} ({p})</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button variant="ghost" size="icon" onClick={() => removeSubject(semIdx, subIdx)} disabled={sem.subjects.length <= 1}>
-                      <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Button variant="ghost" size="icon" onClick={() => removeSubject(semIdx, subIdx)} disabled={sem.subjects.length <= 1} className="hover:bg-white/5 text-muted-foreground hover:text-white">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
-                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => addSubject(semIdx)}>
-                  <Plus className="h-3.5 w-3.5" /> Add Subject
+                
+                <Button variant="outline" size="sm" className="gap-1.5 border-white/10 text-white hover:bg-white/10 text-xs font-semibold tracking-wide" onClick={() => addSubject(semIdx)}>
+                  <Plus className="h-4 w-4 text-primary" /> ADD SUBJECT
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <Button variant="outline" onClick={addSemester} className="gap-1.5">
-            <Plus className="h-4 w-4" /> Add Semester
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
+          <Button variant="outline" onClick={addSemester} className="gap-1.5 border-white/10 text-white hover:bg-white/10 font-bold text-xs tracking-wider uppercase h-11 px-5 rounded-lg">
+            <Plus className="h-4 w-4" /> ADD SEMESTER
           </Button>
-          <Button onClick={calculate} size="lg" className="gap-2">
-            <Calculator className="h-4 w-4" /> Calculate
+          <Button onClick={calculate} className="btn-primary gap-2 h-11 px-6 rounded-lg">
+            <Calculator className="h-4.5 w-4.5 text-primary-foreground" /> CALCULATE ACADEMIC GPA
           </Button>
         </div>
 
         {cgpa !== null && (
-          <Card className="mt-8 border-primary/30 bg-primary/5">
+          <Card className="glass-card bg-primary/10 border-primary/20 shadow-lg mt-8">
             <CardContent className="flex items-center justify-center p-8">
               <div className="text-center">
-                <p className="text-sm font-medium text-muted-foreground">Your CGPA</p>
-                <p className="font-display text-5xl font-bold text-primary">{cgpa.toFixed(2)}</p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Across {semesters.length} semester{semesters.length > 1 ? "s" : ""}
+                <p className="text-xs font-mono text-primary uppercase tracking-wider">Cumulative Grade Point Average</p>
+                <p className="font-display text-5xl font-extrabold text-white mt-3 tracking-tighter">{cgpa.toFixed(2)}</p>
+                <p className="mt-2 text-xs text-muted-foreground uppercase font-mono tracking-wider">
+                  Computed across {semesters.length} semester{semesters.length > 1 ? "s" : ""}
                 </p>
               </div>
             </CardContent>
