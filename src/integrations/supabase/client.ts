@@ -8,11 +8,24 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+// Safe storage: falls back to sessionStorage if localStorage is blocked
+// (e.g., iOS Safari in private/incognito mode, or strict browser settings)
+const safeStorage = (() => {
+  try {
+    localStorage.setItem('__lp_test__', '1');
+    localStorage.removeItem('__lp_test__');
+    return localStorage;
+  } catch {
+    return sessionStorage;
+  }
+})();
+
 const realSupabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
+    storage: safeStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
   }
 });
 

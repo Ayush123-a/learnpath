@@ -32,7 +32,18 @@ export const useAuth = () => useContext(AuthContext);
 
 // Check if Supabase is properly configured
 const isSupabaseConfigured = () => {
-  return !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return false;
+  if (
+    url.includes("placeholder") || 
+    url.includes("your-supabase") ||
+    key.includes("placeholder") ||
+    key.includes("your-supabase")
+  ) {
+    return false;
+  }
+  return true;
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

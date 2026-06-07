@@ -10,6 +10,24 @@ export const isMockEnabled = () => {
   if (flag === "1") return true;
   if (flag === "0") return false;
   
+  // If explicitly requested via environment variable
+  if (import.meta.env.VITE_ENABLE_MOCK === "true") return true;
+  if (import.meta.env.VITE_ENABLE_MOCK === "false") return false;
+
+  // Fallback to mock if Supabase variables are missing or placeholders
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (
+    !supabaseUrl || 
+    !supabaseKey || 
+    supabaseUrl.includes("placeholder") || 
+    supabaseUrl.includes("your-supabase") ||
+    supabaseKey.includes("placeholder") ||
+    supabaseKey.includes("your-supabase")
+  ) {
+    return true;
+  }
+  
   // Default to true in development/localhost environments
   const host = window.location.hostname;
   return host === "localhost" || host === "127.0.0.1" || import.meta.env.DEV;
@@ -189,92 +207,116 @@ class MockQueryBuilder {
     return this;
   }
 
+  private writeAction: { type: "insert" | "update" | "delete"; values?: any } | null = null;
+
   // Write actions
-  async insert(values: any | any[]) {
-    const list = Array.isArray(values) ? values : [values];
-    const items = list.map(item => ({
-      id: item.id || crypto.randomUUID(),
-      created_at: new Date().toISOString(),
-      ...item
-    }));
-    this.data.push(...items);
-    setStoredTable(this.tableName, this.data);
-    return { data: Array.isArray(values) ? items : items[0], error: null };
+  insert(values: any | any[]) {
+    this.writeAction = { type: "insert", values };
+    return this;
   }
 
-  async update(values: any) {
-    // Apply filters first
-    const matched: any[] = [];
-    const updatedData = this.data.map(item => {
-      let matches = true;
-      for (const fn of this.filters) {
-        if (!fn(item)) {
-          matches = false;
-          break;
-        }
-      }
-      if (matches) {
-        const newItem = { ...item, ...values, updated_at: new Date().toISOString() };
-        matched.push(newItem);
-        return newItem;
-      }
-      return item;
-    });
-
-    this.data = updatedData;
-    setStoredTable(this.tableName, this.data);
-    return { data: this.singleRecord ? matched[0] || null : matched, error: null };
+  update(values: any) {
+    this.writeAction = { type: "update", values };
+    return this;
   }
 
-  async delete() {
-    const matched: any[] = [];
-    const remainingData = this.data.filter(item => {
-      let matches = true;
-      for (const fn of this.filters) {
-        if (!fn(item)) {
-          matches = false;
-          break;
-        }
-      }
-      if (matches) {
-        matched.push(item);
-        return false;
-      }
-      return true;
-    });
-
-    this.data = remainingData;
-    setStoredTable(this.tableName, this.data);
-    return { data: matched, error: null };
+  delete() {
+    this.writeAction = { type: "delete" };
+    return this;
   }
 
   // Promise support (making it awaitable)
   then(onfulfilled: any, onrejected?: any) {
-    let result = [...this.data];
-    
-    // Apply filters
-    for (const filterFn of this.filters) {
-      result = result.filter(filterFn);
-    }
+    try {
+      let payload: any = null;
 
-    // Apply sorting
-    if (this.orderField) {
-      result.sort((a, b) => {
-        const valA = a[this.orderField!];
-        const valB = b[this.orderField!];
-        if (valA < valB) return this.orderAscending ? -1 : 1;
-        if (valA > valB) return this.orderAscending ? 1 : -1;
-        return 0;
-      });
-    }
+      if (this.writeAction) {
+        if (this.writeAction.type === "insert") {
+          const values = this.writeAction.values;
+          const list = Array.isArray(values) ? values : [values];
+          const items = list.map(item => ({
+            id: item.id || crypto.randomUUID(),
+            created_at: new Date().toISOString(),
+            ...item
+          }));
+          this.data.push(...items);
+          setStoredTable(this.tableName, this.data);
+          payload = Array.isArray(values) ? items : items[0];
+        } else if (this.writeAction.type === "update") {
+          const values = this.writeAction.values;
+          const matched: any[] = [];
+          const updatedData = this.data.map(item => {
+            let matches = true;
+            for (const fn of this.filters) {
+              if (!fn(item)) {
+                matches = false;
+                break;
+              }
+            }
+            if (matches) {
+              const newItem = { ...item, ...values, updated_at: new Date().toISOString() };
+              matched.push(newItem);
+              return newItem;
+            }
+            return item;
+          });
 
-    // Apply limit
-    if (this.limitCount !== null) {
-      result = result.slice(0, this.limitCount);
-    }
+          this.data = updatedData;
+          setStoredTable(this.tableName, this.data);
+          payload = this.singleRecord ? matched[0] || null : matched;
+        } else if (this.writeAction.type === "delete") {
+          const matched: any[] = [];
+          const remainingData = this.data.filter(item => {
+            let matches = true;
+            for (const fn of this.filters) {
+              if (!fn(item)) {
+                matches = false;
+                break;
+              }
+            }
+            if (matches) {
+              matched.push(item);
+              return false;
+            }
+            return true;
+          });
 
-    const payload = this.singleRecord ? (result[0] || null) : result;
-    return Promise.resolve({ data: payload, error: null }).then(onfulfilled, onrejected);
+          this.data = remainingData;
+          setStoredTable(this.tableName, this.data);
+          payload = matched;
+        }
+      } else {
+        // Read action (select)
+        let result = [...this.data];
+        
+        // Apply filters
+        for (const filterFn of this.filters) {
+          result = result.filter(filterFn);
+        }
+
+        // Apply sorting
+        if (this.orderField) {
+          result.sort((a, b) => {
+            const valA = a[this.orderField!];
+            const valB = b[this.orderField!];
+            if (valA < valB) return this.orderAscending ? -1 : 1;
+            if (valA > valB) return this.orderAscending ? 1 : -1;
+            return 0;
+          });
+        }
+
+        // Apply limit
+        if (this.limitCount !== null) {
+          result = result.slice(0, this.limitCount);
+        }
+
+        payload = this.singleRecord ? (result[0] || null) : result;
+      }
+
+      return Promise.resolve({ data: payload, error: null }).then(onfulfilled, onrejected);
+    } catch (err: any) {
+      return Promise.resolve({ data: null, error: err }).then(onfulfilled, onrejected);
+    }
   }
 }
 

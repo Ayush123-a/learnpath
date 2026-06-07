@@ -104,6 +104,7 @@ const AdminColleges = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-colleges"] });
       toast.success("Status updated!");
     },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error updating status"),
   });
 
   const resetForm = () => {

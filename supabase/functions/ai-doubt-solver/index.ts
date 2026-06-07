@@ -11,10 +11,10 @@ serve(async (req) => {
   try {
     const { messages, mode } = await req.json();
 
-    // AI service removed - Lovable integration disabled
+
     const dummyResponse = "I'm sorry, the AI doubt solving service is currently unavailable as the Lovable integration has been removed.";
 
-    // Return as streaming response in expected format
+
     const stream = new ReadableStream({
       start(controller) {
         const data = `data: ${JSON.stringify({ choices: [{ delta: { content: dummyResponse } }] })}\n\n`;
