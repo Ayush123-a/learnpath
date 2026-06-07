@@ -436,11 +436,61 @@ export const mockSupabase = {
       return { data: { user, session }, error: null };
     },
     async signUp({ email, password, options }: any) {
-      const user = { ...MOCK_USER, email, user_metadata: options?.data || {} };
+      const user = { ...MOCK_USER, id: `mock-user-${Date.now()}`, email, user_metadata: options?.data || {} };
       const session = { ...MOCK_SESSION, user };
       mockSession = session;
       localStorage.removeItem("MOCK_LOGGED_OUT");
       authListeners.forEach(cb => cb("SIGNED_IN", session));
+
+      // Simulate postgres database trigger behaviour:
+      try {
+        const meta = options?.data || {};
+        const profiles = getStoredTable("profiles");
+        const userRoles = getStoredTable("user_roles");
+        const roleRequests = getStoredTable("role_requests");
+
+        // Check and create profile
+        if (!profiles.some(p => p.user_id === user.id)) {
+          profiles.push({
+            id: crypto.randomUUID(),
+            user_id: user.id,
+            full_name: meta.full_name || "",
+            email: user.email || "",
+            college_id: meta.college_id || null,
+            student_id: meta.student_id || null,
+            approval_status: "pending",
+            created_at: new Date().toISOString()
+          });
+          setStoredTable("profiles", profiles);
+        }
+
+        // Add default student role
+        if (!userRoles.some(ur => ur.user_id === user.id && ur.role === "student")) {
+          userRoles.push({
+            id: crypto.randomUUID(),
+            user_id: user.id,
+            role: "student"
+          });
+          setStoredTable("user_roles", userRoles);
+        }
+
+        // Add role request if requested_role is specified and not student
+        if (meta.requested_role && meta.requested_role !== "student") {
+          if (!roleRequests.some(rr => rr.user_id === user.id && rr.requested_role === meta.requested_role)) {
+            roleRequests.push({
+              id: crypto.randomUUID(),
+              user_id: user.id,
+              requested_role: meta.requested_role,
+              status: "pending",
+              created_at: new Date().toISOString()
+            });
+            setStoredTable("role_requests", roleRequests);
+          }
+        }
+      } catch (err) {
+        console.error("Error simulating database trigger on mock signup:", err);
+      }
+
       return { data: { user, session }, error: null };
     },
     async signOut() {

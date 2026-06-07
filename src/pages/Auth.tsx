@@ -85,7 +85,15 @@ const Auth = () => {
     const { data, error } = await supabase.auth.signUp({
       email: signupEmail,
       password: signupPassword,
-      options: { data: { full_name: signupName }, emailRedirectTo: window.location.origin },
+      options: {
+        data: {
+          full_name: signupName,
+          college_id: selectedCollegeId,
+          student_id: signupRole === "student" && studentId.trim() ? studentId.trim().toUpperCase() : undefined,
+          requested_role: signupRole !== "student" ? signupRole : undefined
+        },
+        emailRedirectTo: window.location.origin
+      },
     });
 
     if (error) {
@@ -96,21 +104,35 @@ const Auth = () => {
 
     if (data.user) {
       setTimeout(async () => {
-        const updates: Record<string, string> = { approval_status: "pending" };
-        if (selectedCollegeId) updates.college_id = selectedCollegeId;
-        if (signupRole === "student" && studentId.trim()) {
-          updates.student_id = studentId.trim().toUpperCase();
+        try {
+          const updates: Record<string, string> = { approval_status: "pending" };
+          if (selectedCollegeId) updates.college_id = selectedCollegeId;
+          if (signupRole === "student" && studentId.trim()) {
+            updates.student_id = studentId.trim().toUpperCase();
+          }
+          const { error: updateError } = await supabase.from("profiles").update(updates).eq("user_id", data.user!.id);
+          if (updateError) {
+            console.log("Profile update skipped (likely handled by database trigger):", updateError.message);
+          }
+        } catch (e) {
+          console.log("Profile update caught error:", e);
         }
-        await supabase.from("profiles").update(updates).eq("user_id", data.user!.id);
       }, 1500);
     }
 
     if (signupRole !== "student" && data.user) {
       setTimeout(async () => {
-        await supabase.from("role_requests").insert({
-          user_id: data.user!.id,
-          requested_role: signupRole,
-        });
+        try {
+          const { error: reqError } = await supabase.from("role_requests").insert({
+            user_id: data.user!.id,
+            requested_role: signupRole,
+          });
+          if (reqError) {
+            console.log("Role request insert skipped (likely handled by database trigger):", reqError.message);
+          }
+        } catch (e) {
+          console.log("Role request caught error:", e);
+        }
       }, 1500);
     }
 
