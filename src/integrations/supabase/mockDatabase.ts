@@ -102,11 +102,23 @@ const SEED_DATA: Record<string, any[]> = {
     { id: "plan-inst", name: "Institutional License", slug: "institution", price_monthly: 0, price_total: 9999, currency: "INR", duration_days: 365, features: ["Everything in Pro", "Faculty management", "College branding", "Analytics dashboard", "Bulk user management", "Dedicated support"], is_active: true }
   ],
   profiles: [
-    { id: "profile-1", user_id: "mock-user-123", full_name: "Ayush Singh", email: "ayushsinghrawat76456@gmail.com", phone: "+91 98765 43210", college_id: "college-1", approval_status: "approved" }
+    { id: "profile-1", user_id: "mock-user-123", full_name: "Ayush Singh", email: "ayushsinghrawat76456@gmail.com", phone: "+91 98765 43210", college_id: "college-1", approval_status: "approved" },
+    { id: "profile-2", user_id: "mock-user-456", full_name: "Amit Verma", email: "amit.verma@demo.edu", phone: "+91 98765 43211", college_id: "college-1", approval_status: "approved" },
+    { id: "profile-3", user_id: "mock-user-789", full_name: "Neha Gupta", email: "neha.gupta@demo.edu", phone: "+91 98765 43212", college_id: "college-1", approval_status: "approved" },
+    { id: "profile-4", user_id: "mock-user-222", full_name: "Rahul Sharma", email: "rahul.sharma@demo.edu", phone: "+91 98765 43213", college_id: "college-1", approval_status: "pending", student_id: "BCA2026002" },
+    { id: "profile-5", user_id: "mock-user-333", full_name: "Priya Patel", email: "priya.patel@demo.edu", phone: "+91 98765 43214", college_id: "college-1", approval_status: "pending", student_id: "BCA2026003" }
   ],
   user_roles: [
     { id: "role-1", user_id: "mock-user-123", role: "admin" },
-    { id: "role-2", user_id: "mock-user-123", role: "student" }
+    { id: "role-2", user_id: "mock-user-123", role: "student" },
+    { id: "role-3", user_id: "mock-user-456", role: "student" },
+    { id: "role-4", user_id: "mock-user-789", role: "student" },
+    { id: "role-5", user_id: "mock-user-222", role: "student" },
+    { id: "role-6", user_id: "mock-user-333", role: "student" }
+  ],
+  role_requests: [
+    { id: "req-1", user_id: "mock-user-456", requested_role: "faculty", status: "pending", created_at: new Date().toISOString() },
+    { id: "req-2", user_id: "mock-user-789", requested_role: "college_admin", status: "pending", created_at: new Date().toISOString() }
   ],
   bookmarks: [],
   quiz_attempts: [],
@@ -125,6 +137,13 @@ const SEED_DATA: Record<string, any[]> = {
     { id: "sub-1", user_id: "mock-user-123", plan_id: "plan-pro", status: "active", starts_at: new Date().toISOString(), expires_at: new Date(Date.now() + 365 * 24 * 3600000).toISOString() }
   ]
 };
+
+if (typeof window !== "undefined" && !localStorage.getItem("MOCK_DB_SEEDED_V2")) {
+  localStorage.removeItem("MOCK_DB_PROFILES");
+  localStorage.removeItem("MOCK_DB_USER_ROLES");
+  localStorage.removeItem("MOCK_DB_ROLE_REQUESTS");
+  localStorage.setItem("MOCK_DB_SEEDED_V2", "1");
+}
 
 // Initialize localStorage with seed data if not present
 const getStoredTable = (tableName: string): any[] => {
@@ -392,33 +411,54 @@ const MOCK_SESSION: Session = {
   user: MOCK_USER,
 };
 
+let mockSession: Session | null = (() => {
+  if (typeof window === "undefined") return null;
+  const loggedOut = localStorage.getItem("MOCK_LOGGED_OUT");
+  return loggedOut === "1" ? null : MOCK_SESSION;
+})();
+
+const authListeners = new Set<(event: string, session: Session | null) => void>();
+
 export const mockSupabase = {
   from(tableName: string) {
     return new MockQueryBuilder(tableName);
   },
   auth: {
     async getSession() {
-      return { data: { session: MOCK_SESSION }, error: null };
+      return { data: { session: mockSession }, error: null };
     },
     async signInWithPassword({ email }: { email: string }) {
       const user = { ...MOCK_USER, email };
       const session = { ...MOCK_SESSION, user };
+      mockSession = session;
+      localStorage.removeItem("MOCK_LOGGED_OUT");
+      authListeners.forEach(cb => cb("SIGNED_IN", session));
       return { data: { user, session }, error: null };
     },
     async signUp({ email, password, options }: any) {
       const user = { ...MOCK_USER, email, user_metadata: options?.data || {} };
       const session = { ...MOCK_SESSION, user };
+      mockSession = session;
+      localStorage.removeItem("MOCK_LOGGED_OUT");
+      authListeners.forEach(cb => cb("SIGNED_IN", session));
       return { data: { user, session }, error: null };
     },
     async signOut() {
+      mockSession = null;
+      localStorage.setItem("MOCK_LOGGED_OUT", "1");
+      authListeners.forEach(cb => cb("SIGNED_OUT", null));
       return { error: null };
     },
     onAuthStateChange(callback: any) {
-      setTimeout(() => callback("SIGNED_IN", MOCK_SESSION), 0);
+      // Fire immediately on subscription with current state
+      setTimeout(() => callback(mockSession ? "SIGNED_IN" : "SIGNED_OUT", mockSession), 0);
+      authListeners.add(callback);
       return {
         data: {
           subscription: {
-            unsubscribe() {}
+            unsubscribe() {
+              authListeners.delete(callback);
+            }
           }
         }
       };

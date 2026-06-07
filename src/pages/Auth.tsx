@@ -38,9 +38,13 @@ const Auth = () => {
   const { data: colleges = [] } = useQuery({
     queryKey: ["colleges-list"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("colleges").select("id, name, code").eq("is_active", true).order("name");
+      const { data, error } = await supabase
+        .from("colleges")
+        .select("id, name, code")
+        .eq("is_active", true)
+        .order("name");
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -68,8 +72,14 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (signupRole === "student" && !studentId.trim()) { toast.error("Please enter your Student ID"); return; }
-    if (!selectedCollegeId && colleges.length > 0) { toast.error("Please select your college"); return; }
+    if (signupRole === "student" && !studentId.trim()) {
+      toast.error("Please enter your Student ID");
+      return;
+    }
+    if (!selectedCollegeId && colleges.length > 0) {
+      toast.error("Please select your college");
+      return;
+    }
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
@@ -78,19 +88,30 @@ const Auth = () => {
       options: { data: { full_name: signupName }, emailRedirectTo: window.location.origin },
     });
 
-    if (error) { setLoading(false); toast.error(error.message); return; }
+    if (error) {
+      setLoading(false);
+      toast.error(error.message);
+      return;
+    }
 
     if (data.user) {
       setTimeout(async () => {
         const updates: Record<string, string> = { approval_status: "pending" };
         if (selectedCollegeId) updates.college_id = selectedCollegeId;
-        if (signupRole === "student" && studentId.trim()) updates.student_id = studentId.trim().toUpperCase();
+        if (signupRole === "student" && studentId.trim()) {
+          updates.student_id = studentId.trim().toUpperCase();
+        }
         await supabase.from("profiles").update(updates).eq("user_id", data.user!.id);
       }, 1500);
     }
 
     if (signupRole !== "student" && data.user) {
-      setTimeout(async () => { await supabase.from("role_requests").insert({ user_id: data.user!.id, requested_role: signupRole }); }, 1500);
+      setTimeout(async () => {
+        await supabase.from("role_requests").insert({
+          user_id: data.user!.id,
+          requested_role: signupRole,
+        });
+      }, 1500);
     }
 
     setLoading(false);
@@ -191,10 +212,11 @@ const Auth = () => {
                 boxShadow: "0 0 20px rgba(0,229,255,0.1)",
               }}
             >
-              {tab === "login"
-                ? <Sparkles className="h-6 w-6" style={{ color: "#00e5ff" }} />
-                : <GraduationCap className="h-6 w-6" style={{ color: "#00e5ff" }} />
-              }
+              {tab === "login" ? (
+                <Sparkles className="h-6 w-6" style={{ color: "#00e5ff" }} />
+              ) : (
+                <GraduationCap className="h-6 w-6" style={{ color: "#00e5ff" }} />
+              )}
             </div>
             <h1 className="text-xl font-bold" style={{ fontFamily: "Montserrat, sans-serif", color: "#d6e3ff" }}>
               {tab === "login" ? "Welcome Back" : "Create Account"}
