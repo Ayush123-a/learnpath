@@ -38,6 +38,7 @@ const isSupabaseConfigured = () => {
   if (
     url.includes("placeholder") || 
     url.includes("your-supabase") ||
+    url.includes("cvqyrugizvckrlqwiuxq") ||
     key.includes("placeholder") ||
     key.includes("your-supabase")
   ) {

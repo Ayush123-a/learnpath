@@ -14,7 +14,7 @@ export const isMockEnabled = () => {
   if (import.meta.env.VITE_ENABLE_MOCK === "true") return true;
   if (import.meta.env.VITE_ENABLE_MOCK === "false") return false;
 
-  // Fallback to mock if Supabase variables are missing or placeholders
+  // Fallback to mock if Supabase variables are missing, placeholders, or pointing to the paused project
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   if (
@@ -22,6 +22,7 @@ export const isMockEnabled = () => {
     !supabaseKey || 
     supabaseUrl.includes("placeholder") || 
     supabaseUrl.includes("your-supabase") ||
+    supabaseUrl.includes("cvqyrugizvckrlqwiuxq") ||
     supabaseKey.includes("placeholder") ||
     supabaseKey.includes("your-supabase")
   ) {
